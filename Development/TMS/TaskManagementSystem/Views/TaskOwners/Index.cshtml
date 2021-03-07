@@ -1,0 +1,404 @@
+﻿@model TaskManagementSystem.Models.ListSearchModels.TaskOwnerSearchModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Task Owners";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title ">Task Owners</h4>
+            </div>
+            <div class="card-body">
+                <form class="mt-3" id="SearchForm">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="TaskOwnerName" class="bmd-label-floating">Task Owner Name</label>
+                                <input asp-for="TaskOwnerName" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="TaskOwnerPhoneNo" class="bmd-label-floating">Phone Number</label>
+                                <input asp-for="TaskOwnerPhoneNo" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="TaskOwnerEmail" class="bmd-label-floating">Email</label>
+                                <input asp-for="TaskOwnerEmail" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="TaskOwnerDateOfBirth" class="bmd-label-floating">Date Of Birth</label>
+                                <input asp-for="TaskOwnerDateOfBirth" id="TaskOwnerDateOfBirth" type="text" class="form-control" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="TaskOwnerJoinDate" class="bmd-label-floating">Date Of Joining</label>
+                                <input asp-for="TaskOwnerJoinDate" id="TaskOwnerJoinDate" type="text" class="form-control" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="TaskOwnerAuthenticationModeFlag" class="bmd-label-floating">Authentication Mode Flag</label>
+                                <input asp-for="TaskOwnerAuthenticationModeFlag" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="TaskOwnerMacId" class="bmd-label-floating">Machin Id</label>
+                                <input asp-for="TaskOwnerMacId" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="TaskOwnerIsLock" class="bmd-label-floating">Is Locked</label><input asp-for="TaskOwnerIsLock" class="form-control" type="checkbox">
+                            </div>
+                        </div>
+                    </div> <div class="form-group row">
+                        <div class="col-sm-10">
+                            <button id="Search" type="button" class="btn btn-primary">Search</button>
+                            <button id="Clear" type="button" class="btn btn-primary">Clear</button>
+                            <button id="EditModal" type="button" data-toggle="modal" data-target="#EditModalDialog" style="display:none;">Modal</button>
+                            <button id="DeleteModal" type="button" data-toggle="modal" data-target="#DeleteModalDialog" style="display:none;">Modal</button>
+                            <button id="New" type="button" class="btn btn-primary"><i class="material-icons">add</i> New</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table id="List" class="table">
+                        <thead class=" text-primary">
+                            <tr>
+                                <th>
+                                    ID
+                                </th>
+                                <th>
+                                    Owner Name
+                                </th>
+                                <th>
+                                    Phone No.
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+                                <th>
+                                    Date Of Birth
+                                </th>
+                                <th>
+                                    Joining Date
+                                </th>
+                                <th>
+                                    Auth. Mode Flag
+                                </th>
+                                <th>
+                                    Machine ID
+                                </th>
+                                <th>
+                                    Is Locked
+                                </th>
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="EditModalDialog" tabindex="-1" role="dialog" aria-labelledby="EditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditModalLabel"></h5>
+                <button id="btnEditModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="EditForm">
+
+                    <!-- Smart Wizard HTML -->
+                    <div id="editsmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Owner Contact Details<br /><small>Contact Information</small></a></li>
+                            <li><a href="#step-2">Other Details<br /><small>Other Information</small></a></li>
+                        </ul>
+
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskOwnerName">Owner Name</label>
+                                        <input class="form-control" id="TaskOwnerName" name="TaskOwnerName" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskOwnerEmail">Owner Email</label>
+                                        <input class="form-control" id="TaskOwnerEmail" name="TaskOwnerEmail" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                        <input id="TaskOwnerId" name="TaskOwnerId" type="hidden">
+                                        <input id="UserId" name="UserId" type="hidden">
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskOwnerPhoneNo">Owner Phone</label>
+                                        <input class="form-control" id="TaskOwnerPhoneNo" name="TaskOwnerPhoneNo" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskOwnerAddress">Owner Address</label>
+                                        <textarea id="TaskOwnerAddress" name="TaskOwnerAddress" required class="form-control" cols="10" rows="5"></textarea>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="step-2">
+                                <div id="form-step-1" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskOwnerDateOfBirth">Date of Birth</label>
+                                        <input name="TaskOwnerDateOfBirth" id="TaskOwnerDateOfBirth" type="datetime" required class="form-control" autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-1" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskOwnerJoinDate">Joining Date</label>
+                                        <input name="TaskOwnerJoinDate" id="TaskOwnerJoinDate" type="datetime" required class="form-control" autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                @*<div id="form-step-1" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskOwnerAuthenticationModeFlag">Auth. Mode Flag</label>
+                                        <input class="form-control" id="TaskOwnerAuthenticationModeFlag" name="TaskOwnerAuthenticationModeFlag" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-1" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskOwnerName">Machine Id</label>
+                                        <input class="form-control" id="TaskOwnerPhoneNo" name="TaskOwnerPhoneNo" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>*@
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="DeleteModalDialog" tabindex="-1" role="dialog" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DeleteModalLabel">Delete Task</h5>
+                <button id="btnDeleteModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="DeleteForm">
+                    <!-- Smart Wizard HTML -->
+                    <div id="deletesmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Delete Task Owner<br /><small>Confirm Delete Task Owner?</small></a></li>
+                        </ul>
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskOwnerName">Owner Name</label>
+                                        <input class="form-control" id="TaskOwnerName" name="TaskOwnerName" disabled>
+                                        <input id="TaskOwnerId" name="TaskOwnerId" type="hidden">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteconfirmed()">Delete</button>
+                <button type="button" class="btn btn-outline-info" data-dismiss="modal">cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/core/jquery.min.js"></script>
+
+<script>
+    $(function () {
+        $("#TaskOwnerDateOfBirth,#TaskOwnerJoinDate").datetimepicker({format:'Y-m-d'});
+        $("#New").click(function () {
+            getObject(0);
+        });
+        $("#Search").click(function () {
+            getObjects($("#SearchForm").serialize());
+            //console.log("serialize:", $("#SearchForm").serialize());
+            //console.log("serializeArray:", $("#SearchForm").serializeArray());
+        });
+        $("#Clear").click(function () {
+            $(".form-control").val("");
+            getObjects({});
+        });
+        $("#Search").click();
+
+        //Smart Wizard
+        $("#editsmartwizard").on("showStep", function (e, anchorObject, stepNumber, stepDirection, stepPosition) {
+            //alert("You are on step "+stepNumber+" now");
+            if (stepPosition === 'first') {
+                $("#prev-btn").addClass('disabled');
+            } else if (stepPosition === 'final') {
+                $("#next-btn").addClass('disabled');
+            } else {
+                $("#prev-btn").removeClass('disabled');
+                $("#next-btn").removeClass('disabled');
+            }
+        });
+
+        // Toolbar extra buttons
+        var btnEditFinish = $('<button type=\'button\'></button>').text('Finish')
+            .addClass('btn btn-primary')
+            .on('click', function () {
+                if ($("#EditForm").valid()) {
+                    $.post("/taskowners/edit", $("#EditForm").serialize(), function (taskowners) { window.location.href = "/taskowners/" });
+                }
+            });
+        var btnEditCancel = $('<button type=\'button\'></button>').text('Cancel')
+            .addClass('btn btn-danger')
+            .on('click', function () { $('#editsmartwizard').smartWizard("reset"); });
+
+        //Edit Smart Wizard 1
+        $('#editsmartwizard').smartWizard({
+            selected: 0,
+            theme: 'arrows',
+            transitionEffect: 'fade',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'both',
+                toolbarExtraButtons: [btnEditFinish, btnEditCancel]
+            }
+        });
+
+        //Delete Smart Wizard
+        $('#deletesmartwizard').smartWizard({
+            selected: 0,
+            theme: 'arrows',
+            transitionEffect: 'fade',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'none'
+            }
+        });
+
+    });
+    function getObjects(searchterm) {
+        $.post("/taskowners/gettaskowners", searchterm, function (objects) {
+            var rowstr = "";
+            if (objects && objects.length > 0) {
+                for (var i = 0; i < objects.length; i++) {
+                    rowstr += "<tr>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].taskOwnerId
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].taskOwnerName;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].taskOwnerPhoneNo;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].taskOwnerEmail;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].taskOwnerDateOfBirth;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].taskOwnerJoinDate;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].taskOwnerAuthenticationModeFlag || "NA" ;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].taskOwnerMacId || "NA";
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].taskOwnerIsLock;
+                    rowstr += "    </td>";
+                    rowstr += "    <td class=\"text-primary\">";
+                    rowstr += "        <a class=\"btn-sm btn-link btn-primary\" href=\"javascript:getObject(" + objects[i].taskOwnerId + ")\"><i class=\"material-icons\">create</i></a>";
+                    rowstr += "        <a class=\"btn-sm btn-link btn-danger\"  href=\"javascript:deleteObject(" + objects[i].taskOwnerId + ",'" + objects[i].taskOwnerName + "')\" ><i class=\"material-icons\">delete_sweep</i></a>";
+                    rowstr += "    </td>";
+                    rowstr += "</tr>";
+                }
+            } else {
+                rowstr = "<tr><td>No Data Found.</td></tr>";
+            }
+            $("#List > tbody").html(rowstr);
+            //$('#List').DataTable({ "pagingType": "full_numbers" });
+        });
+    }
+
+    function getObject(taskOwnerId) {
+        if (taskOwnerId > 0) {
+            $.get("/taskowners/edittaskowner?id=" + taskOwnerId, function (object) {
+                if (object) {
+                    $("#UserId", "#EditForm").val(object.userId);
+                    $("#TaskOwnerId", "#EditForm").val(object.taskOwnerId);
+                    $("#TaskOwnerName", "#EditForm").val(object.taskOwnerName);
+                    $("#TaskOwnerEmail", "#EditForm").val(object.taskOwnerEmail);
+                    $("#TaskOwnerPhoneNo", "#EditForm").val(object.taskOwnerPhoneNo);
+                    $("#TaskOwnerAddress", "#EditForm").val(object.taskOwnerAddress);
+
+                    $("#TaskOwnerDateOfBirth", "#EditForm").val(object.taskOwnerDateOfBirth);
+                    $("#TaskOwnerJoinDate", "#EditForm").val(object.taskOwnerJoinDate);
+                }
+                else {
+
+                }
+                $("#EditModal").click();
+                $("#EditModalLabel", "#EditModalDialog").text("Edit Task Owner");
+            });
+        }
+        else {
+            $("#EditModal").click();
+            $("#EditModalLabel", "#EditModalDialog").text("Add Task Owner");
+            $("input,select,textarea", "#EditForm").val("");
+        }
+
+    }
+    function deleteObject(taskOwnerId, taskOwnerName) {
+        $("#TaskOwnerId", "#DeleteForm").val(taskOwnerId);
+        $("#TaskOwnerName", "#DeleteForm").val(taskOwnerName);
+        $("#DeleteModal").click();
+    }
+    function deleteconfirmed() {
+        $.get("/taskowners/delete?id=" + $("#TaskOwnerId", "#DeleteForm").val(), function (taskowners) { window.location.href = "/taskowners/" });
+    }
+</script>

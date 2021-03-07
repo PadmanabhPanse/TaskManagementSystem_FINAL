@@ -1,0 +1,51 @@
+﻿@model LoginViewModel
+
+@{ ViewBag.Title = "User Login"; }
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-profile">
+            <div class="card-avatar">
+                <a href="javascript:;">
+                    <img class="img" src="~/assets/img/faces/marc.jpg">
+                </a>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">Task Management System</h4>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title">Login</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="UserName"></label>
+                        <input asp-for="UserName" class="form-control" />
+                        <span asp-validation-for="UserName" class="text-danger" data-val="true" data-val-required="The Email field is required."></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password"></label>
+                        <input asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger" data-val="true" data-val-required="The Password field is required."></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label asp-for="RememberMe">
+                                <input asp-for="RememberMe" />
+                                @Html.DisplayNameFor(m => m.RememberMe)
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <div>
+                        <a asp-action="ForgotPassword">Forgot Password?</a>
+                    </div>
+                    <div><a asp-action="Register">Create New Account</a></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

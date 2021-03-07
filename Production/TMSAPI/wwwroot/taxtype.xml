@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTaxType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TaxType Id="2020083120373917" Name="IncomeTax" DisplayName="Income Tax">18.0</TaxType>
+  <TaxType Id="2020083120401784" Name="GST" DisplayName="Goods and Service Tax">20.0</TaxType>
+  <TaxType Id="2020083120410890" Name="NationalTax" DisplayName="Inter-Country Tax">10.0</TaxType>
+</ArrayOfTaxType>

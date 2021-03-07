@@ -1,0 +1,40 @@
+﻿@using TaskManagementSystem.Models
+@model EditUsersInRole
+@{
+    ViewData["Title"] = $"Edit Users In Role {Model.RoleName}";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>EditUsersInRole</h2>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title">Users in Role -  @Model.RoleName</h4>
+                <p class="card-category">Add or remove users from this role</p>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="EditUsersInRole">
+                    <input type="hidden" asp-for="RoleId" />
+                    @for (int i = 0; i < Model.users.Count; i++)
+                    {
+                        <div class="form-check m-1">
+                            <input type="hidden" asp-for="@Model.users[i].UserId" />
+                            <input type="hidden" asp-for="@Model.users[i].UserName" />
+                            <input asp-for="@Model.users[i].IsSelected"  type="checkbox" />
+                            <label class="form-check-label" asp-for="@Model.users[i].IsSelected">
+                                @Model.users[i].UserName
+                            </label>
+                        </div>
+                    }
+                    <div class="card-footer">
+                        <input type="submit" value="Update" class="btn btn-primary"
+                               style="width:auto" />
+                        <a asp-action="Edit" asp-route-Id="@Model.RoleId"
+                           class="btn btn-primary" style="width:auto">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

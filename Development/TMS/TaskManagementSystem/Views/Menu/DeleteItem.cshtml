@@ -1,0 +1,64 @@
+﻿@model TaskManagementSystem.Models.MenuItem
+
+@{
+    ViewData["Title"] = "Delete Menu Item";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title">Delete MenuItem for @ViewBag.ParentMenuName</h4>
+                <p class="card-category">Delete MenuItem</p>
+            </div>
+            <div class="card-body">
+                <form asp-action="deleteitem" method="post">
+                    <input asp-for="Id" type="hidden" value="@Model.Id" />
+                    <input asp-for="ParentMenuId" type="hidden" value="@Model.ParentMenuId" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="Name" class="bmd-label-floating">Name</label>
+                                <input asp-for="Name" type="text" class="form-control" value="@Model.Name" disabled>
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="ActionName" class="bmd-label-floating">Action Name</label>
+                                <input asp-for="ActionName" type="text" class="form-control" value="@Model.ActionName" disabled>
+                                <span asp-validation-for="ActionName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="ControllerName" class="bmd-label-floating">Controller Name</label>
+                                <input asp-for="ControllerName" type="text" class="form-control" value="@Model.ControllerName" disabled>
+                                <span asp-validation-for="ControllerName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="Url" class="bmd-label-floating">Url</label>
+                                <input asp-for="Url" type="text" class="form-control" value="@Model.Url" disabled>
+                                <span asp-validation-for="Url" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary pull-right">Delete</button>
+                    <div class="clearfix"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<div>
+    <a asp-action="Details" asp-route-id="@Model.ParentMenuId">Back to List</a>
+</div>

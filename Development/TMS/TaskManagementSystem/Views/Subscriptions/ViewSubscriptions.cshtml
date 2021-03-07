@@ -1,0 +1,71 @@
+﻿@model IEnumerable<TaskManagementSystem.Models.Subscription>
+@inject TaskManagementSystem.Services.SubscriberManager subscriberManager
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager
+@{
+    ViewData["Title"] = "ViewSubscriptions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ApplicationUser user = await userManager.GetUserAsync(User);
+    Subscriber subscriber = await subscriberManager.GetLastSubscriberByUser(user.Id);
+}
+<link href="~/assets/css/UserSubscription.css" rel="stylesheet" />
+
+@if (Model != null && Model.Count() > 0)
+{
+    int i = 0;
+    string position = string.Empty;
+    @foreach (var item in Model)
+    {
+        switch (++i)
+        {
+            case 1: position = "left"; break;
+            case 2: position = "large"; break;
+            case 3: position = "right"; break;
+        }
+        if (i == 1)
+        {
+            @Html.Raw("<div class=\"card\"><div class=\"card-body\"><div class=\"priceTable\">");
+        }
+        <form method="post" asp-controller="subscribers" asp-action="renew">
+            <div class="table @position">
+                <h1>@item.Name</h1>
+                <h2><sup>₹ </sup>@item.TotalCost</h2>
+                <h3>per month (billed annually)</h3>
+                <div class="circle"></div>
+
+                <ul>
+                    <li>
+                        @Html.DisplayFor(modelItem => item.taxType) (@Html.DisplayFor(modelItem => item.taxRate)%) Included
+                    </li>
+                    <li>
+                        @Html.DisplayFor(modelItem => item.queryType)
+                    </li>
+                    @if (item.queryType == QueryType.Subscription)
+                    {
+                        <li>
+                            ₹ @Html.DisplayFor(modelItem => item.CostPerQuery) only for just Processing @item.queryRange.Min to @item.queryRange.Max Queries
+                        </li>
+                    }
+                    <li>
+                        Total    @Html.DisplayFor(modelItem => item.Credits) Credits
+                    </li>
+                    <li>
+                        ₹. @Html.DisplayFor(modelItem => item.CostPerCredit) for Credit
+                    </li>
+                    <li class="noborder">₹ @item.TotalCost TMS Account</li>
+                    @if (User.IsInRole("User"))
+                    {
+                        string btnText = subscriber.SubscriptionId == item.Id ? "Renew" : "Purchase";
+                        <li class="action"><input type="hidden" name="SubscriptionId" value="@item.Id" /><button type="submit">@(btnText)</button></li>
+                    }
+                </ul>
+
+            </div>
+        </form>
+        if (i == 3)
+        {
+            @Html.Raw("</div></div></div>");
+            i = 0;
+        }
+    }
+
+}

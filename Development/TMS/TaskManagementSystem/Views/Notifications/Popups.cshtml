@@ -1,0 +1,350 @@
+﻿@model TaskManagementSystem.Models.ListSearchModels.SearchNotificationModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = " Popups";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title ">Popups</h4>
+            </div>
+            <div class="card-body">
+                <form class="mt-3" id="SearchForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="Description" class="bmd-label-floating">Description</label>
+                                <input asp-for="Description" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10">
+                            <button id="Search" type="button" class="btn btn-primary">Search</button>
+                            <button id="Clear" type="button" class="btn btn-primary">Clear</button>
+                            <button id="EditModal" type="button" data-toggle="modal" data-target="#EditModalDialog" style="display:none;">Modal</button>
+                            <button id="DeleteModal" type="button" data-toggle="modal" data-target="#DeleteModalDialog" style="display:none;">Modal</button>
+                            <button id="New" type="button" class="btn btn-primary"><i class="material-icons">add</i> New</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table id="List" class="table">
+                        <thead class=" text-primary">
+                            <tr>
+                                <th>
+                                    ID
+                                </th>
+                                <th>
+                                    Popup
+                                </th>
+                                <th>
+                                    Popup Date
+                                </th>
+                                <th>
+                                    Is Read
+                                </th>
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="EditModalDialog" tabindex="-1" role="dialog" aria-labelledby="EditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditModalLabel"></h5>
+                <button id="btnEditModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="EditForm">
+
+                    <!-- Smart Wizard HTML -->
+                    <div id="editsmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Popup<br /><small>Popup</small></a></li>
+                        </ul>
+
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="Description">Description</label>
+                                        <textarea id="Description" name="Description" class="form-control"></textarea>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="PopupDate">Popup Date</label>
+                                        <input class="form-control" id="PopupDate" name="PopupDate">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="SettingId">Notification Setting</label>
+                                        <select id="SettingId" name="SettingId" class="form-control">
+                                        </select>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <input id="NotificationId" name="NotificationId" type="hidden" />
+                                        <input id="IsPopup" name="IsPopup" type="hidden" />
+                                        <input id="IsRead" name="IsRead" type="hidden" />
+                                        <input id="NotificationDate" name="NotificationDate" type="hidden"/>
+                                        <input id="SmsTime" name="SmsTime" type="hidden"/>
+                                        <input id="EmailTime" name="EmailTime" type="hidden"/>
+                                        <input id="OwnerId" name="OwnerId" type="hidden" />
+                                        <input id="UserId" name="UserId" type="hidden" />
+                                        <label for="TaskId">Task</label>
+                                        <select id="TaskId" name="TaskId" class="form-control">
+                                        </select>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="DeleteModalDialog" tabindex="-1" role="dialog" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DeleteModalLabel">Delete Popup</h5>
+                <button id="btnDeleteModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="DeleteForm">
+                    <!-- Smart Wizard HTML -->
+                    <div id="deletesmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Delete Popup<br /><small>Confirm Delete Popup?</small></a></li>
+                        </ul>
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="Type">Popup</label>
+                                        <input class="form-control" id="Description" name="Description" disabled>
+                                        <input id="NotificationId" name="NotificationId" type="hidden">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteconfirmed()">Delete</button>
+                <button type="button" class="btn btn-outline-info" data-dismiss="modal">cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/core/jquery.min.js"></script>
+
+<script>
+    $(function () {
+        $("#PopupDate").datetimepicker({ format: "Y-m-d" });
+        $("#New").click(function () {
+            getObject(0);
+        });
+        $("#Search").click(function () {
+            getObjects($("#SearchForm").serialize());
+        });
+        $("#Clear").click(function () {
+            $(".form-control").val("");
+            getObjects({});
+        });
+        $("#Search").click();
+
+        // Smart Wizard
+        $("#editsmartwizard").on("showStep", function (e, anchorObject, stepNumber, stepDirection, stepPosition) {
+            //alert("You are on step "+stepNumber+" now");
+            if (stepPosition === 'first') {
+                $("#prev-btn").addClass('disabled');
+            } else if (stepPosition === 'final') {
+                $("#next-btn").addClass('disabled');
+            } else {
+                $("#prev-btn").removeClass('disabled');
+                $("#next-btn").removeClass('disabled');
+            }
+        });
+
+        // Toolbar extra buttons
+        var btnEditFinish = $('<button type=\'button\'></button>').text('Finish')
+            .addClass('btn btn-primary')
+            .on('click', function () {
+                if ($("#EditForm").valid()) {
+                    $.post("/notifications/editnotification", $("#EditForm").serialize(), function () { window.location.href = "/notifications/popups/" });
+                }
+            });
+        var btnEditCancel = $('<button type=\'button\'></button>').text('Cancel')
+            .addClass('btn btn-danger')
+            .on('click', function () { $('#editsmartwizard').smartWizard("reset"); });
+
+        //Edit Smart Wizard 1
+        $('#editsmartwizard').smartWizard({
+            selected: 0,
+            theme: 'arrows',
+            transitionEffect: 'fade',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'both',
+                toolbarExtraButtons: [btnEditFinish, btnEditCancel]
+            }
+        });
+
+        //Delete Smart Wizard
+        $('#deletesmartwizard').smartWizard({
+            selected: 0,
+            theme: 'arrows',
+            transitionEffect: 'fade',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'none'
+            }
+        });
+        $("#TaskId", "#EditForm").change(function () {
+            $.get("/tasks/edittask?id=" + $("#TaskId", "#EditForm").val(), function (task) {
+                if (task) {
+                    $("#UserId", "#EditForm").val(task.userId);
+                    $("#OwnerId", "#EditForm").val(task.taskOwnerId);
+                }
+            });
+        });
+
+    });
+    function getObjects(searchterm) {
+        $.post("/notifications/getpopups", searchterm, function (notifications) {
+            var str = "";
+            if (notifications && notifications.length > 0) {
+                for (var i = 0; i < notifications.length; i++) {
+                    str += "<tr>";
+                    str += "    <td>";
+                    str += notifications[i].notificationId
+                    str += "    </td>";
+                    str += "    <td>";
+                    str += notifications[i].description;
+                    str += "    </td>";
+                    str += "    <td>";
+                    str += notifications[i].popupDate;
+                    str += "    </td>";
+                    str += "    <td>";
+                    str += notifications[i].isRead ? "Yes" : "No";
+                    str += "    </td>";
+                    str += "    <td class=\"text-primary\">";
+                    str += "        <a class=\"btn-sm btn-link btn-primary\" href=\"javascript:getObject(" + notifications[i].notificationId + ")\"><i class=\"material-icons\">create</i></a>";
+                    str += "        <a class=\"btn-sm btn-link btn-danger\"  href=\"javascript:deleteObject(" + notifications[i].notificationId + ",'" + notifications[i].description + "')\" ><i class=\"material-icons\">delete_sweep</i></a>";
+                    str += "    </td>";
+                    str += "</tr>";
+                }
+
+            } else {
+                str = "<tr><td>No Data Found.</td></tr>";
+            }
+            $("#List > tbody").html(str);
+        });
+
+    }
+
+    function getObject(Id) {
+        if (Id > 0) {
+            $.get("/notifications/editpopup?id=" + Id, function (object) {
+                if (object) {
+                    $("#NotificationId", "#EditForm").val(object.notificationId);
+                    $("#Description", "#EditForm").val(object.description);
+                    $("#PopupDate", "#EditForm").val(object.popupDate);
+                    $("#IsRead", "#EditForm").val(object.isRead);
+                    $("#UserId", "#EditForm").val(object.userId);
+                    $("#OwnerId", "#EditForm").val(object.ownerId);
+                    getnotificationsettings($("#SettingId", "#EditForm"), object.settingId);
+                    gettasks($("#TaskId", "#EditForm"), object.taskId);
+                }
+                $("#EditModal").click();
+                $("#EditModalLabel", "#EditModalDialog").text("Edit Popup");
+                $("#IsPopup", "#EditForm").val("True");
+                $("#IsRead", "#EditForm").val("False");
+                $("#NotificationDate,#SmsTime,#EmailTime", "#EditForm").val("@(DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))");
+            });
+        }
+        else {
+            getnotificationsettings($("#SettingId", "#EditForm"), "");
+            gettasks($("#TaskId", "#EditForm"), "");
+            $("#EditModal").click();
+            $("#EditModalLabel", "#EditModalDialog").text("Add Popup");
+            $("input,select,textarea", "#EditForm").val("");
+            $("#IsPopup", "#EditForm").val("True");
+            $("#IsRead", "#EditForm").val("False");
+            $("#NotificationDate,#SmsTime,#EmailTime", "#EditForm").val("@(DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))");
+        }
+    }
+    function deleteObject(notificationId, description) {
+        $("#NotificationId", "#DeleteForm").val(notificationId);
+        $("#Description", "#DeleteForm").val(description);
+        $("#DeleteModal").click();
+    }
+    function deleteconfirmed() {
+        $.get("/notifications/deletenotification?id=" + $("#NotificationId", "#DeleteForm").val(), function () { window.location.href = "/notifications/popups/" });
+    }
+
+    function getnotificationsettings($elementId, selectedValue) {
+        $.post("/notifications/getnotificationsettings", { Popup: true }, function (settings) {
+            var str = "<option value=\"\">-- Select --</option>";
+            if (settings && settings.length > 0) {
+                for (var i = 0; i < settings.length; i++) {
+                    str += "<option value=\"" + settings[i].settingId + "\">" + settings[i].type + "</option>";
+                }
+            } else {
+                str = "<tr><td>Please add Popup Settings.</td></tr>";
+            }
+            $elementId.html(str);
+            if (selectedValue) {
+                $elementId.val(selectedValue);
+            }
+        });
+    }
+    function gettasks($elementId, selectedValue) {
+        $.post("/common/gettasks", null, function (tasks) {
+            var str = "<option value=\"\">-- Select --</option>";
+            if (tasks && tasks.length > 0) {
+                for (var i = 0; i < tasks.length; i++) {
+                    str += "<option value=\"" + tasks[i].taskId + "\">" + tasks[i].taskName + "</option>";
+                }
+            } else {
+                str = "<tr><td>No Data Found.</td></tr>";
+            }
+            $elementId.html(str);
+            if (selectedValue) {
+                $elementId.val(selectedValue);
+            }
+        });
+    }
+
+</script>

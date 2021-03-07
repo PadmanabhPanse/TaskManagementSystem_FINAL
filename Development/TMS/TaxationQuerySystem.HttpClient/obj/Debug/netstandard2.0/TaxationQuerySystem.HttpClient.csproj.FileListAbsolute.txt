@@ -1,0 +1,9 @@
+D:\source\repos\TMS\TaxationQuerySystemAPI\TaxationQuerySystem.HttpClient\bin\Debug\netstandard2.0\TaxationQuerySystem.HttpClient.deps.json
+D:\source\repos\TMS\TaxationQuerySystemAPI\TaxationQuerySystem.HttpClient\bin\Debug\netstandard2.0\TaxationQuerySystem.HttpClient.dll
+D:\source\repos\TMS\TaxationQuerySystemAPI\TaxationQuerySystem.HttpClient\bin\Debug\netstandard2.0\TaxationQuerySystem.HttpClient.pdb
+D:\source\repos\TMS\TaxationQuerySystemAPI\TaxationQuerySystem.HttpClient\obj\Debug\netstandard2.0\TaxationQuerySystem.HttpClient.AssemblyInfoInputs.cache
+D:\source\repos\TMS\TaxationQuerySystemAPI\TaxationQuerySystem.HttpClient\obj\Debug\netstandard2.0\TaxationQuerySystem.HttpClient.AssemblyInfo.cs
+D:\source\repos\TMS\TaxationQuerySystemAPI\TaxationQuerySystem.HttpClient\obj\Debug\netstandard2.0\TaxationQuerySystem.HttpClient.csproj.CoreCompileInputs.cache
+D:\source\repos\TMS\TaxationQuerySystemAPI\TaxationQuerySystem.HttpClient\obj\Debug\netstandard2.0\TaxationQuerySystem.HttpClient.dll
+D:\source\repos\TMS\TaxationQuerySystemAPI\TaxationQuerySystem.HttpClient\obj\Debug\netstandard2.0\TaxationQuerySystem.HttpClient.pdb
+D:\source\repos\TMS\TaxationQuerySystemAPI\TaxationQuerySystem.HttpClient\obj\Debug\netstandard2.0\TaxationQuerySystem.HttpClient.csprojAssemblyReference.cache

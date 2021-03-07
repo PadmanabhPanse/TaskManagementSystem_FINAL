@@ -1,0 +1,57 @@
+﻿@model IEnumerable<TaskManagementSystem.Models.Menu>
+@{
+    ViewData["Title"] = "Menus";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title ">Menus</h4>
+                <p class="card-category">List of Menus</p>
+                <a class="btn btn-primary" asp-action="Create"><i class="material-icons">add</i></a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class=" text-primary">
+                            <tr>
+                                <th>
+                                    ID
+                                </th>
+                                <th>
+                                    Name
+                                </th>
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Count() > 0)
+                            {
+                                foreach (var menu in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @menu.Id
+                                        </td>
+                                        <td>
+                                            @menu.Name
+                                        </td>
+                                        <td class="text-primary">
+                                            <a class="btn btn-primary" asp-action="details" asp-route-id="@menu.Id"><i class="material-icons">list</i></a> 
+                                            <a class="btn btn-primary" asp-action="edit" asp-route-id="@menu.Id"><i class="material-icons">create</i></a>
+                                            <a class="btn btn-danger" asp-action="delete" asp-route-id="@menu.Id"><i class="material-icons">delete_sweep</i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

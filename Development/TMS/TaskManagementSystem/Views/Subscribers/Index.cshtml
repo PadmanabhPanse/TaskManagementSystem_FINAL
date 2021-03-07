@@ -1,0 +1,396 @@
+﻿@model TaskManagementSystem.Models.ListSearchModels.SearchSubscriber
+@{ Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Subscribers"; }
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title ">Subscribers</h4>
+            </div>
+            <div class="card-body">
+                <form class="mt-3" id="SearchForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="SubscriptionStartDate" class="bmd-label-floating">Subscription Start Date</label>
+                                <input asp-for="SubscriptionStartDate" id="TaskOwnerDateOfBirth" type="text" class="form-control" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="SubscriptionEndDate" class="bmd-label-floating">Subscription End Date</label>
+                                <input asp-for="SubscriptionEndDate" id="SubscriptionEndDate" type="text" class="form-control" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="TotalCost" class="bmd-label-floating">Total Cost ₹</label>
+                                <input asp-for="TotalCost" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="BalanceAmount" class="bmd-label-floating">Balance ₹</label>
+                                <input asp-for="BalanceAmount" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="ThresholdPrice" class="bmd-label-floating">Threshold Price ₹</label>
+                                <input asp-for="ThresholdPrice" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="IsLocked" class="bmd-label-floating">Is Locked</label><input asp-for="IsLocked.Value" class="form-control" type="checkbox">
+                            </div>
+                        </div>
+                    </div> <div class="form-group row">
+                        <div class="col-sm-10">
+                            <button id="Search" type="button" class="btn btn-primary">Search</button>
+                            <button id="Clear" type="button" class="btn btn-primary">Clear</button>
+                            <button id="EditModal" type="button" data-toggle="modal" data-target="#EditModalDialog" style="display:none;">Modal</button>
+                            <button id="DeleteModal" type="button" data-toggle="modal" data-target="#DeleteModalDialog" style="display:none;">Modal</button>
+                            @*<button id="New" type="button" class="btn btn-primary"><i class="material-icons">add</i> New</button>*@
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table id="List" class="table">
+                        <thead class=" text-primary">
+                            <tr>
+                                <th>
+                                    ID
+                                </th>
+                                <th>
+                                    User Name
+                                </th>
+                                <th>
+                                    Subscription
+                                </th>
+                                <th>
+                                    Tax Type
+                                </th>
+                                <th>
+                                    Start Date
+                                </th>
+                                <th>
+                                    End Date
+                                </th>
+                                <th>
+                                    Query Details
+                                </th>
+                                <th>
+                                    Credit Details
+                                </th>
+                                <th>
+                                    Total Cost ₹
+                                </th>
+                                <th>
+                                    Balance Amount ₹
+                                </th>
+                                <th>
+                                    Threshold Price ₹
+                                </th>
+                                <th>
+                                    Is Locked
+                                </th>
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="EditModalDialog" tabindex="-1" role="dialog" aria-labelledby="EditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditModalLabel"></h5>
+                <button id="btnEditModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="EditForm">
+
+                    <!-- Smart Wizard HTML -->
+                    <div id="editsmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Subscriber Details<br /><small>Subscriber Details</small></a></li>
+                        </ul>
+
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="User">User</label>
+                                        <input class="form-control" id="User" readonly autocomplete="off">
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="Subscription">Subscription</label>
+                                        <input class="form-control" id="Subscription" readonly autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                        <input id="SubscriberId" name="SubscriberId" type="hidden">
+                                        <input id="SubscriptionId" name="SubscriptionId" type="hidden">
+                                        <input id="UserId" name="UserId" type="hidden">
+                                        <input id="IsLocked" name="IsLocked" type="hidden">
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TotalCost">Total Cost ₹</label>
+                                        <input class="form-control" id="TotalCost" name="TotalCost" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="BalanceAmount">Balance Amount ₹</label>
+                                        <input class="form-control" id="BalanceAmount" name="BalanceAmount" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="ThresholdPrice">Threshold Price ₹</label>
+                                        <input class="form-control" id="ThresholdPrice" name="ThresholdPrice" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="SubscriptionStartDate">Start Date</label>
+                                        <input name="SubscriptionStartDate" id="SubscriptionStartDate" type="datetime" readonly class="form-control" autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="SubscriptionEndDate">End Date</label>
+                                        <input name="SubscriptionEndDate" id="SubscriptionEndDate" type="datetime" readonly class="form-control" autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="DeleteModalDialog" tabindex="-1" role="dialog" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DeleteModalLabel">Delete Task</h5>
+                <button id="btnDeleteModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="DeleteForm">
+                    <!-- Smart Wizard HTML -->
+                    <div id="deletesmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Delete Subscriber<br /><small>Confirm Delete Subscriber?</small></a></li>
+                        </ul>
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskOwnerName">Subscriber</label>
+                                        <input class="form-control" id="Subscriber" name="Subscriber" disabled>
+                                        <input id="SubscriberId" name="SubscriberId" type="hidden">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteconfirmed()">Delete</button>
+                <button type="button" class="btn btn-outline-info" data-dismiss="modal">cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/core/jquery.min.js"></script>
+
+<script>
+    $(function () {
+        $("#SubscriptionStartDate,#SubscriptionEndDate").datetimepicker({ format: 'Y-m-d' });
+        //$("#New").click(function () {
+        //    getObject(0);
+        //});
+        $("#Search").click(function () {
+            getObjects($("#SearchForm").serialize());
+        });
+        $("#Clear").click(function () {
+            $(".form-control").val("");
+            getObjects({});
+        });
+        $("#Search").click();
+
+        //Smart Wizard
+        $("#editsmartwizard").on("showStep", function (e, anchorObject, stepNumber, stepDirection, stepPosition) {
+            //alert("You are on step "+stepNumber+" now");
+            if (stepPosition === 'first') {
+                $("#prev-btn").addClass('disabled');
+            } else if (stepPosition === 'final') {
+                $("#next-btn").addClass('disabled');
+            } else {
+                $("#prev-btn").removeClass('disabled');
+                $("#next-btn").removeClass('disabled');
+            }
+        });
+
+        // Toolbar extra buttons
+        var btnEditFinish = $('<button type=\'button\'></button>').text('Finish')
+            .addClass('btn btn-primary')
+            .on('click', function () {
+                if ($("#EditForm").valid()) {
+                    $.post("/subscribers/edit", $("#EditForm").serialize(), function () { window.location.href = "/subscribers/" });
+                }
+            });
+        var btnEditCancel = $('<button type=\'button\'></button>').text('Cancel')
+            .addClass('btn btn-danger')
+            .on('click', function () { $('#editsmartwizard').smartWizard("reset"); });
+
+        //Edit Smart Wizard 1
+        $('#editsmartwizard').smartWizard({
+            selected: 0,
+            theme: 'arrows',
+            transitionEffect: 'fade',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'both',
+                toolbarExtraButtons: [btnEditFinish, btnEditCancel]
+            }
+        });
+
+        //Delete Smart Wizard
+        $('#deletesmartwizard').smartWizard({
+            selected: 0,
+            theme: 'arrows',
+            transitionEffect: 'fade',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'none'
+            }
+        });
+
+    });
+    function getObjects(searchterm) {
+        $.post("/subscribers/getsubscribers", searchterm, function (objects) {
+            var rowstr = "";
+            if (objects && objects.length > 0) {
+                for (var i = 0; i < objects.length; i++) {
+                    rowstr += "<tr>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].subscriberId
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].user;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].subscriptionName;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].taxType;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].subscriptionStartDate;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].subscriptionEndDate;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += "Type:" + objects[i].queryType + (objects[i].queryType =="Subscription"?"<BR>Range:(" + objects[i].queryRange.min + "-" + objects[i].queryRange.max + ")<BR>Cost Per Query:₹" + objects[i].costPerQuery:"");
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += "Credits:" + objects[i].credits + "<BR>Cost Per Credit:₹" + objects[i].costPerCredit;
+                    rowstr += "    </td>";
+                    rowstr += "    <td> ₹";
+                    rowstr += objects[i].totalCost;
+                    rowstr += "    </td>";
+                    rowstr += "    <td> ₹";
+                    rowstr += objects[i].balanceAmount;
+                    rowstr += "    </td>";
+                    rowstr += "    <td> ₹";
+                    rowstr += objects[i].thresholdPrice;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].isLocked ? "Yes" : "No";
+                    rowstr += "    </td>";
+                    rowstr += "    <td class=\"text-primary\">";
+                    rowstr += "        <a class=\"btn-sm btn-link btn-primary\" href=\"javascript:getObject('" + objects[i].subscriberId + "')\"><i class=\"material-icons\">create</i></a>";
+                    rowstr += "        <a class=\"btn-sm btn-link btn-danger\"  href=\"javascript:deleteObject('" + objects[i].subscriberId + "','" + objects[i].user + "," + objects[i].subscriptionName + "')\" ><i class=\"material-icons\">delete_sweep</i></a>";
+                    rowstr += "    </td>";
+                    rowstr += "</tr>";
+                }
+            } else {
+                rowstr = "<tr><td>No Data Found.</td></tr>";
+            }
+            $("#List > tbody").html(rowstr);
+            //$('#List').DataTable({ "pagingType": "full_numbers" });
+        });
+    }
+
+    function getObject(subscriberId) {
+        if (subscriberId) {
+            $.get("/subscribers/editsubscriber?id=" + subscriberId, function (object) {
+                if (object) {
+                    $("#UserId", "#EditForm").val(object.userId);
+                    $("#SubscriberId", "#EditForm").val(object.subscriberId);
+                    $("#SubscriptionId", "#EditForm").val(object.subscriptionId);
+                    $("#User", "#EditForm").val(object.user);
+                    $("#Subscription", "#EditForm").val(object.subscriptionName);
+                    $("#TotalCost", "#EditForm").val(object.totalCost);
+                    $("#BalanceAmount", "#EditForm").val(object.balanceAmount);
+                    $("#ThresholdPrice", "#EditForm").val(object.thresholdPrice);
+                    $("#IsLocked", "#EditForm").val(object.isLocked);
+                    $("#SubscriptionStartDate", "#EditForm").val(object.subscriptionStartDate);
+                    $("#SubscriptionEndDate", "#EditForm").val(object.subscriptionEndDate);
+                }
+                else {
+
+                }
+                $("#EditModal").click();
+                $("#EditModalLabel", "#EditModalDialog").text("Edit Task Owner");
+            });
+        }
+        else {
+            $("#EditModal").click();
+            $("#EditModalLabel", "#EditModalDialog").text("Add Task Owner");
+            $("input,select,textarea", "#EditForm").val("");
+        }
+
+    }
+    function deleteObject(SubscriberId, Subscriber) {
+        $("#SubscriberId", "#DeleteForm").val(SubscriberId);
+        $("#Subscriber", "#DeleteForm").val(Subscriber);
+        $("#DeleteModal").click();
+    }
+    function deleteconfirmed() {
+        $.get("/subscribers/delete?id=" + $("#SubscriberId", "#DeleteForm").val(), function () { window.location.href = "/subscribers/index" });
+    }</script>

@@ -1,0 +1,141 @@
+﻿@model Subscription
+
+@{
+    ViewBag.Title = "Subscription";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/assets/js/core/jquery.min.js"></script>
+
+<script>
+            $(function () {
+                if ("@(Model.queryType.ToString())" == "@(QueryType.Subscription.ToString())") {
+                    $(".form-control", "#subscription-Config").prop("disabled", false);
+                 //   $("#subscription-Config").show();
+                }
+                else {
+                    $(".form-control", "#subscription-Config").prop("disabled", true);
+                   // $("#subscription-Config").hide();
+                }
+                $("#queryType").change(function () {
+                    if ($("#queryType").val() == "@(QueryType.Subscription.ToString())") {
+                        $(".form-control", "#subscription-Config").prop("disabled", false);
+                        //   $("#subscription-Config").show();
+                    }
+                    else {
+                        $(".form-control", "#subscription-Config").prop("disabled", true);
+                        // $("#subscription-Config").hide();
+                    }
+                });
+           fillDDLs("@(Model.taxType)")
+    });
+    function fillDDLs(taxtype) {
+
+        $.get("/common/gettaxtypes", function (objects) {
+            var str = "<option>-- Select --</option>";
+            if (objects && objects.length > 0) {
+                for (var i = 0; i < objects.length; i++) {
+                    str += "<option data-taxrate=\"" + objects[i].value + "\" value=\"" + objects[i].name + "\">" + objects[i].name + " (" + objects[i].value + "%)</option>";
+                }
+            } else {
+                str = "<option>No Data</option>";
+            }
+            $("#TaxType").html(str);
+            $("#TaxType").val(taxtype);
+        });
+
+        $("#TaxType").change(function () {
+            $("#TaxRate").val($("#TaxType option:selected").data("taxrate"));
+        });
+    }
+</script>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title">Edit Subscription</h4>
+                <p class="card-category">Edit Subscription</p>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="Name" class="control-label">Name</label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                                <input asp-for="Id" type="hidden" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="taxType" class="control-label">Tax Type</label>
+                                <select id="TaxType" name="TaxType" required class="form-control" cols="10" rows="5"></select>
+                                <input type="hidden" id="TaxRate" name="TaxRate" value="@Model.taxRate">
+                                <span asp-validation-for="taxType" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="queryType" class="control-label">Query Type</label>
+                                @Html.DropDownListFor(model => model.queryType, (IEnumerable<SelectListItem>)ViewBag.QueryTypes, new { @class = "form-control" })
+                                <span asp-validation-for="queryType" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="subscription-Config" class="row">
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="queryRange" class="control-label">Query Range</label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group bmd-form-group">
+                                            <label asp-for="queryRange.Min" class="control-label">Min</label>
+                                            <input asp-for="queryRange.Min" name="queryRange.Min" class="form-control" />
+                                            <span asp-validation-for="queryRange.Min" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group bmd-form-group">
+                                            <label asp-for="queryRange.Max" class="control-label">Max</label>
+                                            <input asp-for="queryRange.Max" name="queryRange.Max" class="form-control" />
+                                            <span asp-validation-for="queryRange.Max" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="CostPerQuery" class="control-label">Cost Per Query</label>
+                                <input asp-for="CostPerQuery" class="form-control" />
+                                <span asp-validation-for="CostPerQuery" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="Credits" class="control-label">Credits</label>
+                                <input asp-for="Credits" class="form-control" />
+                                <span asp-validation-for="Credits" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="CostPerCredit" class="control-label">Cost Per Credit</label>
+                                <input asp-for="CostPerCredit" class="form-control" />
+                                <span asp-validation-for="CostPerCredit" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary pull-right">Save</button>
+                    <div class="clearfix"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

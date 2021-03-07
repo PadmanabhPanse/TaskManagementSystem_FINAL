@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Logo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Img1 fileName="img1.png" />
+  <Img2 fileName="img2.png" />
+  <Img3 fileName="img3.png" />
+  <Img4 fileName="img4.png" />
+  <Img5 fileName="img5.png" />
+</Logo>

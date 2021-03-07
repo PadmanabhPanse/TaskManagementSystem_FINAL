@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Blog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <BlogText Id="tring">ting</BlogText>
+  <LeftText Id="string">string</LeftText>
+  <RightText Id="string">string</RightText>
+  <FooterText Id="string">string</FooterText>
+</Blog>

@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Subscription>
+@{
+    ViewData["Title"] = "Subscriptions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title ">Subscriptions</h4>
+                <p class="card-category">List of Subscriptions</p>
+                <a class="btn btn-primary" style="width:auto" asp-action="create">
+                    <i class="material-icons">add</i>
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class=" text-primary">
+                            <tr>
+                                <th>
+                                    ID
+                                </th>
+                                <th>
+                                    Name
+                                </th>
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Count() > 0)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @item.Id
+                                        </td>
+                                        <td>
+                                            @item.Name
+                                        </td>
+                                        <td class="text-primary">
+                                            <a class="btn btn-primary" asp-action="edit" asp-route-id="@item.Id"><i class="material-icons">create</i></a>
+                                            <a class="btn btn-danger" asp-action="delete" asp-route-id="@item.Id"><i class="material-icons">delete_sweep</i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

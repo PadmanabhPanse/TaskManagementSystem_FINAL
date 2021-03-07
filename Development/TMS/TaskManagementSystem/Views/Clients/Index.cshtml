@@ -1,0 +1,411 @@
+﻿@model TaskManagementSystem.Models.ListSearchModels.SearchClient
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Clients";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title ">Clients</h4>
+            </div>
+            <div class="card-body">
+                <form class="mt-3" id="SearchForm">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="ClientCompanyName" class="bmd-label-floating">Client Company Name</label>
+                                <input asp-for="ClientCompanyName" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="ClientPhone" class="bmd-label-floating">Phone Number</label>
+                                <input asp-for="ClientPhone" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="ClientEmail" class="bmd-label-floating">Email</label>
+                                <input asp-for="ClientEmail" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="ClientContactPerson" class="bmd-label-floating">Contact Person</label>
+                                <input asp-for="ClientContactPerson" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="ClientSubscriptionStart" class="bmd-label-floating">Subscription Start Date</label>
+                                <input asp-for="ClientSubscriptionStart" id="ClientSubscriptionStart" type="text" class="form-control" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="ClientSubscriptionEnd" class="bmd-label-floating">Subscription End Date</label>
+                                <input asp-for="ClientSubscriptionEnd" id="ClientSubscriptionEnd" type="text" class="form-control" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="ClientContactDate" class="bmd-label-floating">Client Contact Date</label>
+                                <input asp-for="ClientContactDate" id="ClientSubscriptionEnd" type="text" class="form-control" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="ClientIsLock.Value" class="bmd-label-floating">Is Locked</label><input asp-for="ClientIsLock.Value" class="form-control" type="checkbox">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-10">
+                            <button id="Search" type="button" class="btn btn-primary">Search</button>
+                            <button id="Clear" type="button" class="btn btn-primary">Clear</button>
+                            <button id="EditModal" type="button" data-toggle="modal" data-target="#EditModalDialog" style="display:none;">Modal</button>
+                            <button id="DeleteModal" type="button" data-toggle="modal" data-target="#DeleteModalDialog" style="display:none;">Modal</button>
+                            <button id="New" type="button" class="btn btn-primary"><i class="material-icons">add</i> New</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table id="taskList" class="table">
+                        <thead class=" text-primary">
+                            <tr>
+                                <th>
+                                    ID
+                                </th>
+                                <th>
+                                    Company Name
+                                </th>
+                                <th>
+                                    Contact Person
+                                </th>
+                                <th>
+                                    Phone No.
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+                                <th>
+                                    Date Of Contact
+                                </th>
+                                <th>
+                                    Subscription Start Date
+                                </th>
+                                <th>
+                                    Subscription End Date
+                                </th>
+                                <th>
+                                    Is Locked
+                                </th>
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="EditModalDialog" tabindex="-1" role="dialog" aria-labelledby="EditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditModalLabel"></h5>
+                <button id="btnEditModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="EditForm">
+
+                    <!-- Smart Wizard HTML -->
+                    <div id="editsmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Client Contact Details<br /><small>Contact Information</small></a></li>
+                            <li><a href="#step-2">Other Details<br /><small>Other Information</small></a></li>
+                        </ul>
+
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="ClientCompanyName">Company Name</label>
+                                        <input class="form-control" id="ClientCompanyName" name="ClientCompanyName" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="ClientContactPerson">Contact Person</label>
+                                        <input class="form-control" id="ClientContactPerson" name="ClientContactPerson" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="ClientEmail">Client Email</label>
+                                        <input class="form-control" id="ClientEmail" name="ClientEmail" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                        <input id="ClientId" name="ClientId" type="hidden">
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="ClientPhone">Client Phone</label>
+                                        <input class="form-control" id="ClientPhone" name="ClientPhone" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="ClientLocation">Client Location</label>
+                                        <textarea id="ClientLocation" name="ClientLocation" required class="form-control" cols="10" rows="5"></textarea>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="ClientComment">Client Comment</label>
+                                        <textarea id="ClientComment" name="ClientComment" required class="form-control" cols="10" rows="5"></textarea>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="step-2">
+                                <div id="form-step-1" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="ClientSubscriptionStart">Subscription Start Date</label>
+                                        <input name="ClientSubscriptionStart" id="ClientSubscriptionStart" type="datetime" required class="form-control" autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-1" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="ClientSubscriptionEnd">Subscription End Date</label>
+                                        <input name="ClientSubscriptionEnd" id="ClientSubscriptionEnd" type="datetime" required class="form-control" autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-1" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="ClientContactDate">Client Contact Date</label>
+                                        <input name="ClientContactDate" id="ClientContactDate" type="datetime" required class="form-control" autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="DeleteModalDialog" tabindex="-1" role="dialog" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DeleteModalLabel">Delete Task</h5>
+                <button id="btnDeleteModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="DeleteForm">
+                    <!-- Smart Wizard HTML -->
+                    <div id="deletesmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Delete Task Owner<br /><small>Confirm Delete Task Owner?</small></a></li>
+                        </ul>
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="ClientCompanyName">Company Name</label>
+                                        <input class="form-control" id="ClientCompanyName" name="ClientCompanyName" disabled>
+                                        <input id="ClientId" name="ClientId" type="hidden">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteconfirmed()">Delete</button>
+                <button type="button" class="btn btn-outline-info" data-dismiss="modal">cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/core/jquery.min.js"></script>
+
+<script>
+    $(function () {
+        $("#ClientSubscriptionStart,#ClientSubscriptionEnd,#ClientContactDate").datetimepicker({format:"Y-m-d"});
+        $("#New").click(function () {
+            getObject(0);
+        });
+        $("#Search").click(function () {
+            getObjects($("#SearchForm").serialize());
+            //console.log("serialize:", $("#SearchForm").serialize());
+            //console.log("serializeArray:", $("#SearchForm").serializeArray());
+        });
+        $("#Clear").click(function () {
+            $(".form-control").val("");
+            getObjects({});
+        });
+        $("#Search").click();
+
+        //Smart Wizard
+        $("#editsmartwizard").on("showStep", function (e, anchorObject, stepNumber, stepDirection, stepPosition) {
+            //alert("You are on step "+stepNumber+" now");
+            if (stepPosition === 'first') {
+                $("#prev-btn").addClass('disabled');
+            } else if (stepPosition === 'final') {
+                $("#next-btn").addClass('disabled');
+            } else {
+                $("#prev-btn").removeClass('disabled');
+                $("#next-btn").removeClass('disabled');
+            }
+        });
+
+        // Toolbar extra buttons
+        var btnEditFinish = $('<button type=\'button\'></button>').text('Finish')
+            .addClass('btn btn-primary')
+            .on('click', function () {
+                if ($("#EditForm").valid()) {
+                    $.post("/clients/edit", $("#EditForm").serialize(), function (taskowners) { window.location.href = "/clients/" });
+                }
+            });
+        var btnEditCancel = $('<button type=\'button\'></button>').text('Cancel')
+            .addClass('btn btn-danger')
+            .on('click', function () { $('#editsmartwizard').smartWizard("reset"); });
+
+        //Edit Smart Wizard 1
+        $('#editsmartwizard').smartWizard({
+            selected: 0,
+            theme: 'arrows',
+            transitionEffect: 'fade',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'both',
+                toolbarExtraButtons: [btnEditFinish, btnEditCancel]
+            }
+        });
+
+        //Delete Smart Wizard
+        $('#deletesmartwizard').smartWizard({
+            selected: 0,
+            theme: 'arrows',
+            transitionEffect: 'fade',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'none'
+            }
+        });
+
+    });
+    function getObjects(searchterm) {
+        $.post("/clients/getclients", searchterm, function (objects) {
+            var rowstr = "";
+            if (objects && objects.length > 0) {
+                for (var i = 0; i < objects.length; i++) {
+                    rowstr += "<tr>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].clientId
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].clientCompanyName;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].clientContactPerson;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].clientPhone;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].clientEmail;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].clientContactDate;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].clientSubscriptionStart;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].clientSubscriptionEnd;
+                    rowstr += "    </td>";
+                    rowstr += "    <td>";
+                    rowstr += objects[i].clientIsLock || false;
+                    rowstr += "    </td>";
+                    rowstr += "    <td class=\"text-primary\">";
+                    rowstr += "        <a class=\"btn-sm btn-link btn-primary\" href=\"javascript:getObject(" + objects[i].clientId + ")\"><i class=\"material-icons\">create</i></a>";
+                    rowstr += "        <a class=\"btn-sm btn-link btn-danger\"  href=\"javascript:deletetask(" + objects[i].clientId + ",'" + objects[i].clientCompanyName + "')\" ><i class=\"material-icons\">delete_sweep</i></a>";
+                    rowstr += "    </td>";
+                    rowstr += "</tr>";
+                }
+            } else {
+                rowstr = "<tr><td>No Data Found.</td></tr>";
+            }
+            $("#taskList > tbody").html(rowstr);
+            //$('#taskList').DataTable({ "pagingType": "full_numbers" });
+        });
+    }
+
+    function getObject(ClientId) {
+        if (ClientId > 0) {
+            $.get("/clients/editclient?id=" + ClientId, function (object) {
+                if (object) {
+                    $("#ClientId", "#EditForm").val(object.clientId);
+                    $("#ClientCompanyName", "#EditForm").val(object.clientCompanyName);
+                    $("#ClientContactPerson", "#EditForm").val(object.clientContactPerson);
+                    $("#ClientEmail", "#EditForm").val(object.clientEmail);
+                    $("#ClientPhone", "#EditForm").val(object.clientPhone);
+                    $("#ClientLocation", "#EditForm").val(object.clientLocation);
+                    $("#ClientComment", "#EditForm").val(object.clientComment);
+
+                    $("#ClientContactDate", "#EditForm").val(object.clientContactDate);
+                    $("#ClientSubscriptionStart", "#EditForm").val(object.clientSubscriptionStart);
+                    $("#ClientSubscriptionEnd", "#EditForm").val(object.clientSubscriptionEnd);
+                }
+                else {
+
+                }
+                $("#EditModal").click();
+                $("#EditModalLabel", "#EditModalDialog").text("Edit Client");
+            });
+        }
+        else {
+            $("#EditModal").click();
+            $("#EditModalLabel", "#EditModalDialog").text("Add Client");
+            $("input,select,textarea", "#EditForm").val("");
+        }
+
+    }
+    function deletetask(ClientId, ClientCompanyName) {
+        $("#ClientId", "#DeleteForm").val(ClientId);
+        $("#ClientCompanyName", "#DeleteForm").val(ClientCompanyName);
+        $("#DeleteModal").click();
+    }
+    function deleteconfirmed() {
+        $.get("/clients/delete?id=" + $("#ClientId", "#DeleteForm").val(), function (taskowners) { window.location.href = "/clients/" });
+    }
+</script>

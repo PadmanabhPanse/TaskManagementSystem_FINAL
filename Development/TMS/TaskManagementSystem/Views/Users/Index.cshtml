@@ -1,0 +1,81 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<ApplicationUser>
+@inject UserManager<ApplicationUser> userMngr
+@{ ViewData["Title"] = "Users";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title ">Users</h4>
+                <p class="card-category">List of Users</p>
+                <a class="btn btn-primary" style="width:auto" asp-area="" asp-controller="Account" asp-action="Register">
+                    <i class="material-icons">add</i>
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class=" text-primary">
+                            <tr>
+                                <th>
+                                    ID
+                                </th>
+                                <th>
+                                    Name
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+                                <th>
+                                    Phone
+                                </th>
+                                <th>
+                                    Profession
+                                </th>
+                                <th>
+                                    Role
+                                </th>
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Count() > 0)
+                            {
+                                foreach (var user in Model)
+                                {
+                <tr>
+                    <td>
+                        @user.Id
+                    </td>
+                    <td>
+                        @((user.FirstName ?? string.Empty) +" "+ (user.LastName ?? string.Empty))
+                    </td>
+                    <td>
+                        @user.Email
+                    </td>
+                    <td>
+                        @(user.PhoneNumber ?? "NA")
+                    </td>
+                    <td>
+                        @(user.Profession ?? "NA")
+                    </td>
+                    <td>
+                        @userMngr.GetRolesAsync(user).Result.FirstOrDefault()
+                    </td>
+                    <td class="text-primary">
+                        <a class="btn btn-link btn-primary" asp-action="edit" asp-route-id="@user.Id"><i class="material-icons">create</i></a>
+                        <a class="btn btn-link btn-danger" asp-action="delete" asp-route-id="@user.Id"><i class="material-icons">delete_sweep</i></a>
+                    </td>
+                </tr>}
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

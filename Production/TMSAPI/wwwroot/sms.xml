@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfSms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Sms Id="2020052916433476" Types="TaskStatusChange">
+    <Body>Status of Task {{object.TaskName}} has Changed to {{object.TaskStatusId}}</Body>
+  </Sms>
+  <Sms Id="2020060820392762">
+    <Body>New Task Added by User</Body>
+  </Sms>
+</ArrayOfSms>

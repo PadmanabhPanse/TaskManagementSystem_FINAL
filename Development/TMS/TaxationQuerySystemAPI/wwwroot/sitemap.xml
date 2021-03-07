@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfMenu xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Menu Id="2020051116311207" Name="Task Management">
+    <MenuItems>
+      <MenuItem Id="2020051116313755" Roles="TaskManager,Anonymous,Staff,Admin,User" Name="All Tasks " ActionName="work" Url="/tasks/All" ParentMenuId="2020051116311207" />
+      <MenuItem Id="2020051918453655" Roles="Admin" Name="Pending Tasks" ActionName="work" Url="/tasks/Pending" ParentMenuId="2020051116311207" />
+      <MenuItem Id="2020051918473490" Roles="Admin" Name="Closed Tasks" ActionName="work" Url="/tasks/Closed" ParentMenuId="2020051116311207" />
+      <MenuItem Id="2020051918490920" Roles="Admin" Name="Rejected Tasks" ActionName="work" Url="/tasks/Rejected" ParentMenuId="2020051116311207" />
+      <MenuItem Id="2020051918500751" Roles="Admin" Name="Ongoing Tasks" ActionName="work" Url="/tasks/Ongoing" ParentMenuId="2020051116311207" />
+      <MenuItem Id="2020051918503212" Roles="Admin" Name="Completed Tasks" ActionName="work" Url="/tasks/Completed" ParentMenuId="2020051116311207" />
+    </MenuItems>
+  </Menu>
+  <Menu Id="2020051116342140" Name="Site Map Management">
+    <MenuItems>
+      <MenuItem Id="2020051116345399" Roles="Admin" Name="Menus" ActionName="list" Url="/menu/index" ParentMenuId="2020051116342140" />
+    </MenuItems>
+  </Menu>
+  <Menu Id="2020051116355548" Name="User Management">
+    <MenuItems>
+      <MenuItem Id="2020051116361474" Roles="Admin" Name="Users" ActionName="person" Url="/users/index" ParentMenuId="2020051116355548" />
+    </MenuItems>
+  </Menu>
+  <Menu Id="2020051116364975" Name="Role Management">
+    <MenuItems>
+      <MenuItem Id="2020051116371572" Roles="Admin" Name="Roles" ActionName="person" Url="/roles/index" ParentMenuId="2020051116364975" />
+    </MenuItems>
+  </Menu>
+  <Menu Id="2020052618263748" Name="Subscription Management">
+    <MenuItems>
+      <MenuItem Id="2020052618265876" Roles="Admin" Name="Manage Subscription" ActionName="subscriptions" Url="/subscriptions/index" ParentMenuId="2020052618263748" />
+      <MenuItem Id="2020052618365996" Roles="Admin" Name="View Subscription" ActionName="subscriptions" Url="/subscriptions/view" ParentMenuId="2020052618263748" />
+      <MenuItem Id="2020071718061595" Roles="Admin" Name="Subscribers" ActionName="person" Url="/subscribers/index" ParentMenuId="2020052618263748" />
+      <MenuItem Id="2020083120242053" Roles="Admin" Name="TaxType" ActionName="request_quote" Url="/TaxTypes/Index" ParentMenuId="2020052618263748" />
+    </MenuItems>
+  </Menu>
+  <Menu Id="2020052820213532" Name="Notifications">
+    <MenuItems>
+      <MenuItem Id="2020062321410961" Roles="Admin" Name="Notification Settings" ActionName="settings" Url="/notifications/settings/" ParentMenuId="2020052820213532" />
+      <MenuItem Id="2020062514160185" Roles="Admin" Name="Notifications" ActionName="notifications" Url="/notifications/" ParentMenuId="2020052820213532" />
+      <MenuItem Id="2020071822085465" Roles="Admin" Name="Popups" ActionName="notifications" Url="/notifications/popups/" ParentMenuId="2020052820213532" />
+    </MenuItems>
+  </Menu>
+  <Menu Id="2020060117045621" Name="CMS">
+    <MenuItems>
+      <MenuItem Id="2020060117062789" Roles="Admin" Name="Task Owners" ActionName="person" Url="/taskowners/" ParentMenuId="2020060117045621" />
+      <MenuItem Id="2020060211404896" Roles="Admin" Name="Clients" ActionName="person" Url="/clients/" ParentMenuId="2020060117045621" />
+    </MenuItems>
+  </Menu>
+  <Menu Id="2020060820561876" Name="Income Tax">
+    <MenuItems>
+      <MenuItem Id="2020060820564495" Roles="Admin,User" Name="Income Tax Details" ActionName="work" Url="http://www.incometaxIndia.gov.in" ParentMenuId="2020060820561876" />
+    </MenuItems>
+  </Menu>
+  <Menu Id="2020071411120351" Name="Quotation">
+    <MenuItems>
+      <MenuItem Id="2020071411121819" Roles="QuoteUser,Admin,User" Name="Quotations" ActionName="request_quote" Url="/Quotations/Index" ParentMenuId="2020071411120351" />
+    </MenuItems>
+  </Menu>
+</ArrayOfMenu>

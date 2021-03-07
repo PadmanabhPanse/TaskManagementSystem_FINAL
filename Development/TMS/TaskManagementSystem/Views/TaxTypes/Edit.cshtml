@@ -1,0 +1,44 @@
+﻿@model TaxType
+@{ ViewData["Title"] = "Edit TaxType";
+                Layout = "~/Views/Shared/_Layout.cshtml"; }
+<script src="~/assets/js/core/jquery.min.js"></script>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title">Edit TaxType</h4>
+                <p class="card-category">Edit TaxType</p>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group bmd-form-group">
+                                <input asp-for="Id" type="hidden" />
+                                <label asp-for="Name" class="control-label">Name</label>
+                                <input asp-for="Name" class="form-control" cols="10" rows="5" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>   
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="DisplayName" class="control-label">Display Name</label>
+                                <input asp-for="DisplayName" class="form-control" cols="10" rows="5" />
+                                <span asp-validation-for="DisplayName" class="text-danger"></span>
+                            </div>  
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="Value" class="control-label">Value</label>
+                                <input asp-for="Value" class="form-control" cols="10" rows="5" />
+                                <span asp-validation-for="Value" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary pull-right">Save</button>
+                    <div class="clearfix"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

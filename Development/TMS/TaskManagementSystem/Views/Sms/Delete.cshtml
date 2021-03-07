@@ -1,0 +1,36 @@
+﻿@model Sms
+
+@{
+    ViewData["Title"] = "Delete Sms";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title">Delete Sms</h4>
+                <p class="card-category">Delete Sms</p>
+            </div>
+            <div class="card-body">
+                <form asp-action="Delete" method="post">
+                    <input asp-for="Id" type="hidden" value="@Model.Id" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="Types" class="bmd-label-floating">Type</label>
+                                <input asp-for="Types" type="text" class="form-control" value="@Model.Types" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary pull-right">Delete</button>
+                    <div class="clearfix"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

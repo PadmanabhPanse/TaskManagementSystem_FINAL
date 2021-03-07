@@ -1,0 +1,365 @@
+﻿@model TaskManagementSystem.Models.ListSearchModels.SearchNotificationSettingModel
+@{ Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = " Notification Settings"; }
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title ">Notification Settings</h4>
+            </div>
+            <div class="card-body">
+                <form class="mt-3" id="SearchForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="Type" class="bmd-label-floating">Type</label>
+                                <input asp-for="Type" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="TaskChange" class="bmd-label-floating">Task Change</label>
+                                <input asp-for="TaskChange" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10">
+                            <button id="Search" type="button" class="btn btn-primary">Search</button>
+                            <button id="Clear" type="button" class="btn btn-primary">Clear</button>
+                            <button id="EditModal" type="button" data-toggle="modal" data-target="#EditModalDialog" style="display:none;">Modal</button>
+                            <button id="DeleteModal" type="button" data-toggle="modal" data-target="#DeleteModalDialog" style="display:none;">Modal</button>
+                            <button id="New" type="button" class="btn btn-primary"><i class="material-icons">add</i> New</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table id="List" class="table">
+                        <thead class=" text-primary">
+                            <tr>
+                                <th>
+                                    ID
+                                </th>
+                                <th>
+                                    Type
+                                </th>
+                                <th>
+                                    Task Change
+                                </th>
+                                <th>
+                                    Dashboard
+                                </th>
+                                <th>
+                                    E-mail
+                                </th>
+                                <th>
+                                    SMS
+                                </th>
+                                <th>
+                                    Popup
+                                </th>
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="EditModalDialog" tabindex="-1" role="dialog" aria-labelledby="EditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditModalLabel"></h5>
+                <button id="btnEditModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="EditForm">
+
+                    <!-- Smart Wizard HTML -->
+                    <div id="editsmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Notification Settings<br /><small>Settings</small></a></li>
+                        </ul>
+
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="Type">Notification Type</label>
+                                        <input class="form-control" id="Type" name="Type" required autocomplete="off">
+                                        <input id="DescId" name="descriptions[0].DescId" type="hidden">
+                                        <input id="SettingId" name="SettingId" type="hidden">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="Type">Task Change</label>
+                                        <input class="form-control" id="TaskChange" name="TaskChange" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="Email">Email</label>
+                                        <input name="chkEmail" id="chkEmail" class="form-control" type="checkbox" />
+                                        <input name="Email" id="Email" type="hidden" />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="chkSms">SMS</label>
+                                        <input name="chkSms" id="chkSms" class="form-control" type="checkbox" />
+                                        <input name="Sms" id="Sms" type="hidden" />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="Dashboard">Dashboard</label>
+                                        <input name="chkDashboard" id="chkDashboard" class="form-control" type="checkbox" />
+                                        <input name="Dashboard" id="Dashboard" type="hidden" />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="Popup">Popup</label>
+                                        <input name="chkPopup" id="chkPopup" class="form-control" type="checkbox" />
+                                        <input name="Popup" id="Popup" type="hidden" />
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="DeleteModalDialog" tabindex="-1" role="dialog" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DeleteModalLabel">Delete Notification Setting</h5>
+                <button id="btnDeleteModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="DeleteForm">
+                    <!-- Smart Wizard HTML -->
+                    <div id="deletesmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Delete Notification<br /><small>Confirm Delete Notification Setting?</small></a></li>
+                        </ul>
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="Type">Notification Type</label>
+                                        <input class="form-control" id="Type" name="Type" disabled>
+                                        <input id="SettingId" name="SettingId" type="hidden">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteconfirmed()">Delete</button>
+                <button type="button" class="btn btn-outline-info" data-dismiss="modal">cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/core/jquery.min.js"></script>
+
+<script>
+    $(function () {
+        $("#New").click(function () {
+            getObject(0);
+        });
+        $("#Search").click(function () {
+            getObjects($("#SearchForm").serialize());
+        });
+        $("#Clear").click(function () {
+            $(".form-control").val("");
+            getObjects({});
+        });
+        $("#Search").click();
+
+        //Smart Wizard
+        $("#editsmartwizard").on("showStep", function (e, anchorObject, stepNumber, stepDirection, stepPosition) {
+            //alert("You are on step "+stepNumber+" now");
+            if (stepPosition === 'first') {
+                $("#prev-btn").addClass('disabled');
+            } else if (stepPosition === 'final') {
+                $("#next-btn").addClass('disabled');
+            } else {
+                $("#prev-btn").removeClass('disabled');
+                $("#next-btn").removeClass('disabled');
+            }
+        });
+
+        // Toolbar extra buttons
+        var btnEditFinish = $('<button type=\'button\'></button>').text('Finish')
+            .addClass('btn btn-primary')
+            .on('click', function () {
+                if ($("#EditForm").valid()) {
+                    $.post("/notifications/edit", $("#EditForm").serialize(), function () { window.location.href = "/notifications/settings/" });
+                }
+            });
+        var btnEditCancel = $('<button type=\'button\'></button>').text('Cancel')
+            .addClass('btn btn-danger')
+            .on('click', function () { $('#editsmartwizard').smartWizard("reset"); });
+
+        //Edit Smart Wizard 1
+        $('#editsmartwizard').smartWizard({
+            selected: 0,
+            theme: 'arrows',
+            transitionEffect: 'fade',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'both',
+                toolbarExtraButtons: [btnEditFinish, btnEditCancel]
+            }
+        });
+
+        //Delete Smart Wizard
+        $('#deletesmartwizard').smartWizard({
+            selected: 0,
+            theme: 'arrows',
+            transitionEffect: 'fade',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'none'
+            }
+        });
+    });
+    function getObjects(searchterm) {
+        $.post("/notifications/getnotificationsettings", searchterm, function (settings) {
+            console.log(settings);
+            var str = "";
+            if (settings && settings.length > 0) {
+                for (var i = 0; i < settings.length; i++) {
+                    str += "<tr>";
+                    str += "    <td>";
+                    str += settings[i].settingId
+                    str += "    </td>";
+                    str += "    <td>";
+                    str += settings[i].type;
+                    str += "    </td>";
+                    str += "    <td>";
+                    str += settings[i].taskChange;
+                    str += "    </td>";
+                    str += "    <td>";
+                    str += settings[i].dashboard ? "Yes" : "No";
+                    str += "    </td>";
+                    str += "    <td>";
+                    str += settings[i].email ? "Yes" : "No";
+                    str += "    </td>";
+                    str += "    <td>";
+                    str += settings[i].sms ? "Yes" : "No";
+                    str += "    </td>";
+                    str += "    <td>";
+                    str += settings[i].popup ? "Yes" : "No";
+                    str += "    </td>";
+                    str += "    <td class=\"text-primary\">";
+                    str += "        <a class=\"btn-sm btn-link btn-primary\" href=\"javascript:getObject(" + settings[i].settingId + ")\"><i class=\"material-icons\">create</i></a>";
+                    str += "        <a class=\"btn-sm btn-link btn-danger\"  href=\"javascript:deleteObject(" + settings[i].settingId + ",'" + settings[i].type + "')\" ><i class=\"material-icons\">delete_sweep</i></a>";
+                    str += "    </td>";
+                    str += "</tr>";
+                }
+
+            } else {
+                str = "<tr><td>No Data Found.</td></tr>";
+            }
+            $("#List > tbody").html(str);
+        });
+
+        $("#chkEmail", "#EditForm").change(function () {
+            $("#Email", "#EditForm").val($("#chkEmail", "#EditForm").is(":checked"));
+            if ($("#chkDashboard", "#EditForm").is(":checked")) {
+                $("#chkPopup", "#EditForm").prop("checked", false).change();
+            }
+        });
+        $("#chkSms", "#EditForm").change(function () {
+            $("#Sms", "#EditForm").val($("#chkSms", "#EditForm").is(":checked"));
+            if ($("#chkDashboard", "#EditForm").is(":checked")) {
+                $("#chkPopup", "#EditForm").prop("checked", false).change();
+            }
+        });
+        $("#chkDashboard", "#EditForm").change(function () {
+            $("#Dashboard", "#EditForm").val($("#chkDashboard", "#EditForm").is(":checked"));
+            if ($("#chkDashboard", "#EditForm").is(":checked")) {
+                $("#chkPopup", "#EditForm").prop("checked", false).change();
+            }
+        });
+        $("#chkPopup", "#EditForm").change(function () {
+            $("#Popup", "#EditForm").val($("#chkPopup", "#EditForm").is(":checked"));
+            if ($("#chkPopup", "#EditForm").is(":checked")) {
+                $("#chkEmail,#chkSms,#chkDashboard", "#EditForm").prop("checked", false).change();
+            }
+        });
+    }
+
+    function getObject(settingId) {
+        if (settingId > 0) {
+            $.get("/notifications/editnotificationsetting?id=" + settingId, function (setting) {
+                if (setting) {
+                    $("#SettingId", "#EditForm").val(setting.settingId);
+                    $("#Type", "#EditForm").val(setting.type);
+                    $("#TaskChange", "#EditForm").val(setting.taskChange);
+
+                    $("#chkEmail", "#EditForm").prop("checked", setting.email);
+                    $("#chkSms", "#EditForm").prop("checked", setting.sms);
+                    $("#chkDashboard", "#EditForm").prop("checked", setting.dashboard);
+                    $("#chkPopup", "#EditForm").prop("checked", setting.popup);
+
+                    $("#Email", "#EditForm").val(setting.email);
+                    $("#Sms", "#EditForm").val(setting.sms);
+                    $("#Dashboard", "#EditForm").val(setting.dashboard);
+                    $("#Popup", "#EditForm").val(setting.popup);
+                }
+                else {
+
+                }
+                $("#EditModal").click();
+                $("#EditModalLabel", "#EditModalDialog").text("Edit Notification");
+            });
+        }
+        else {
+            $("#EditModal").click();
+            $("#EditModalLabel", "#EditModalDialog").text("Add Notification");
+            $("input,select,textarea", "#EditForm").val("");
+        }
+    }
+    function deleteObject(settingId, type) {
+        $("#SettingId", "#DeleteForm").val(settingId);
+        $("#Type", "#DeleteForm").val(type);
+        $("#DeleteModal").click();
+    }
+    function deleteconfirmed() {
+        $.get("/notifications/delete?id=" + $("#SettingId", "#DeleteForm").val(), function (notifications) { window.location.href = "/notifications/settings/" });
+    }
+
+  
+</script>

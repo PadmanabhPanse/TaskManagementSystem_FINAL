@@ -1,0 +1,1014 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor _httpContextAccessor;
+@model TaskManagementSystem.Models.ListSearchModels.TaskSearchModel
+@{ Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = (Model?.TaskStatusId ?? "All") + " Tasks";
+    ISession Session = _httpContextAccessor.HttpContext.Session; }
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title ">@((Model?.TaskStatusId ?? "All") + " Tasks")</h4>
+            </div>
+            <div class="card-body">
+                <form class="mt-3" id="SearchForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="TaskName" class="bmd-label-floating">Task Name</label>
+                                <input asp-for="TaskName" class="form-control">
+                            </div>
+                        </div>
+                        @if (!this.User.IsInRole("User"))
+                        {
+                            <div class="col-md-6">
+                                <div class="form-group bmd-form-group">
+                                    <label asp-for="TaskOwner" class="bmd-label-floating">Task Owner</label>
+                                    <input asp-for="TaskOwner" class="form-control">
+                                </div>
+                            </div> }
+                        else
+                        {
+                            <div class="col-md-6">
+                                <div class="form-group bmd-form-group">
+                                    <label asp-for="TaskStartDate" class="bmd-label-floating">Start Date</label>
+                                    <input asp-for="TaskStartDate" id="TaskStartDate" type="text" class="form-control" autocomplete="off">
+                                </div>
+                            </div>}
+                    </div>
+                    @if (!this.User.IsInRole("User"))
+                    {
+                        <div class="row">
+                            @{ string className = this.User.IsInRole("Admin") ? "col-md-4" : "col-md-6"; }
+                            @if (this.User.IsInRole("Admin"))
+                            {
+                                <div class="@className">
+                                    <div class="form-group bmd-form-group">
+                                        <label asp-for="TaskThresholdDate" class="bmd-label-floating">Threshold Date</label>
+                                        <input asp-for="TaskThresholdDate" id="TaskThresholdDate" type="text" class="form-control" autocomplete="off">
+                                    </div>
+                                </div>}
+                            <div class="@className">
+                                <div class="form-group bmd-form-group">
+                                    <label asp-for="TaskStartDate" class="bmd-label-floating">Start Date</label>
+                                    <input asp-for="TaskStartDate" id="TaskStartDate" type="text" class="form-control" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="@className">
+                                <div class="form-group bmd-form-group">
+                                    <label asp-for="TaskEstimateTime" class="bmd-label-floating">End Date</label>
+                                    <input asp-for="TaskEstimateTime" id="TaskEstimateTime" type="text" class="form-control" autocomplete="off">
+                                </div>
+                            </div>
+
+                        </div>}
+                    <div class="form-group row">
+                        <div class="col-sm-10">
+                            <input asp-for="TaskStatusId" type="hidden">
+                            <button id="Search" type="button" class="btn btn-primary">Search</button>
+                            <button id="Clear" type="button" class="btn btn-primary">Clear</button>
+                            <button id="EditModal" type="button" data-toggle="modal" data-target="#EditModalDialog" style="display:none;">Modal</button>
+                            <button id="DeleteModal" type="button" data-toggle="modal" data-target="#DeleteModalDialog" style="display:none;">Modal</button>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <button id="New" type="button" class="btn btn-primary"><i class="material-icons">add</i> New</button>
+                            }
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table id="List" class="table">
+                        <thead class=" text-primary">
+                            <tr>
+                                <th>
+                                    ID
+                                </th>
+                                <th>
+                                    Name
+                                </th>
+                                <th>
+                                    Task Status
+                                </th>
+                                @if (this.User.IsInRole("User"))
+                                {
+                                    <th>
+                                        Start Date
+                                    </th>
+                                }
+                                @if (!this.User.IsInRole("User"))
+                                {
+                                    <th>
+                                        User
+                                    </th>
+                                    <th>
+                                        Priority
+                                    </th>
+                                    @if (this.User.IsInRole("Admin"))
+                                    {
+                                        <th>
+                                            Threshold Date
+                                        </th>
+                                    }
+                                    <th>
+                                        Start Date
+                                    </th>
+                                    <th>
+                                        End Date
+                                    </th>
+                                    <th>
+                                        Task Manager
+                                    </th>
+                                    <th>
+                                        Staff
+                                    </th>
+                                }
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="EditModalDialog" tabindex="-1" role="dialog" aria-labelledby="EditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditModalLabel"></h5>
+                <button id="btnEditModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="EditForm" autocomplete="off">
+
+                    <!-- Smart Wizard HTML -->
+                    <div id="editsmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Task Details<br /><small>Basic Information</small></a></li>
+                            <li><a href="#step-2">Description<br /><small>Task Details</small></a></li>
+                            <li><a href="#step-3">Documents<br /><small>Task Documents</small></a></li>
+
+                            <li><a href="#step-4">Task Settings<br /><small>Settings</small></a></li>
+                            <li id="li-step-5"><a href="#step-5">Task Reviews<br /><small>Reviews</small></a></li>
+                            <li id="li-step-6"><a href="#step-6">Task Comments<br /><small>Comments</small></a></li>
+
+                        </ul>
+
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskName">Task Name</label>
+                                        <input class="form-control" id="TaskName" name="TaskName" required autocomplete="off">
+                                        <input id="TaskId" name="TaskId" type="hidden">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskTitle">Task Description</label>
+                                        <textarea id="TaskTitle" name="TaskTitle" required class="form-control" cols="10" rows="5"></textarea>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="step-2">
+                                <input id="TaskDescriptionId" name="descriptions[0].TaskDescriptionId" type="hidden">
+                                <input id="DescTaskId" name="descriptions[0].TaskId" type="hidden">
+                                <div id="form-step-1" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="descriptions[0].TaskDescLine1">Line 1</label>
+                                        <textarea id="desc_Line1" name="descriptions[0].TaskDescLine1" class="form-control" cols="10" rows="5"></textarea>
+                                    </div>
+                                </div>
+                                <div id="form-step-1" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="descriptions[0].TaskDescLine2">Line 2</label>
+                                        <textarea id="desc_Line2" name="descriptions[0].TaskDescLine2" class="form-control" cols="10" rows="5"></textarea>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-1" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="descriptions[0].TaskDescLine3">Line 3</label>
+                                        <textarea id="desc_Line3" name="descriptions[0].TaskDescLine3" class="form-control" cols="10" rows="5"></textarea>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-1" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="descriptions[0].TaskDescLine4">Line 4</label>
+                                        <textarea id="desc_Line4" name="descriptions[0].TaskDescLine4" class="form-control" cols="10" rows="5"></textarea>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="step-3">
+                                <button id="btnaddNewDocRow" type="button" class="btn btn-link btn-primary" onclick="addNewDocRow()"><i class="material-icons">add</i></button>
+                                <div id="form-step-2" role="form" data-toggle="validator">
+                                </div>
+                            </div>
+                            <div id="step-4">
+                                <div id="form-step-3" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskStatusId">Task Status</label>
+                                        <select id="TaskStatusId" name="TaskStatusId" required class="form-control"></select>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                @if (!User.IsInRole("User"))
+                                {
+                                    <div id="form-step-3" role="form" data-toggle="validator">
+                                        <div class="form-group">
+                                            <label for="TaskAdminInstructions">Admin Instructions</label>
+                                            <textarea id="TaskAdminInstructions" name="TaskAdminInstructions" class="form-control" cols="10" rows="5" @Html.Raw(User.IsInRole("Admin") ? "" : "readonly")></textarea>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <div id="form-step-3" role="form" data-toggle="validator">
+                                            <div class="form-group">
+                                                <label for="TaskOwnerId">User</label>
+                                                <select class="form-control" id="UserId" name="UserId" required></select>
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div>
+                                        <div id="form-step-3" role="form" data-toggle="validator">
+                                            <div class="form-group">
+                                                <label for="TaskOwnerId">Task Owner</label>
+                                                <select class="form-control" id="TaskOwnerId" name="TaskOwnerId" required></select>
+                                                <input id="TaskOwner" name="TaskOwner" type="hidden">
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div>
+                                        <div id="form-step-3" role="form" data-toggle="validator">
+                                            <div class="form-group">
+                                                <label for="TaskPriority">Task Priority</label>
+                                                <input id="TaskPriority" name="TaskPriority" type="number" required class="form-control" autocomplete="off">
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" Id="TaskStaffId" name="TaskStaffId" /> }
+                                    else if (User.IsInRole("TaskManager"))
+                                    {
+                                        <div id="form-step-3" role="form" data-toggle="validator">
+                                            <div class="form-group">
+                                                <label for="TaskStaffId">Staff</label>
+                                                <select class="form-control" id="TaskStaffId" name="TaskStaffId" required></select>
+                                                <input type="hidden" Id="TaskOwner" name="TaskOwner" />
+                                                <input type="hidden" Id="TaskOwnerId" name="TaskOwnerId" />
+                                                <input type="hidden" Id="TaskPriority" name="TaskPriority" />
+                                                <input type="hidden" id="UserId" name="UserId" />
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div> }
+                                    else if (User.IsInRole("Staff"))
+                                    {
+                                        <input type="hidden" Id="TaskOwner" name="TaskOwner" />
+                                        <input type="hidden" Id="TaskOwnerId" name="TaskOwnerId" />
+                                        <input type="hidden" Id="TaskStaffId" name="TaskStaffId" />
+                                        <input type="hidden" Id="TaskPriority" name="TaskPriority" />
+                                        <input type="hidden" id="UserId" name="UserId" />}
+                                    @if (!User.IsInRole("Admin"))
+                                    {
+                                        <button id="btnaddNewIncentive" type="button" class="btn btn-link btn-primary" onclick="addNewIncentiveRow()"><i class="material-icons">add</i></button>
+                                        <div id="form-step-3" role="form" data-toggle="validator">
+                                            <div id="incentives">
+
+                                            </div>
+                                        </div>
+
+                                    }
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <div id="form-step-3" role="form" data-toggle="validator">
+                                            <div class="form-group">
+                                                <label for="TaskThresholdDate">Threshold Date</label>
+                                                <input name="TaskThresholdDate" id="TaskThresholdDate" type="datetime" required class="form-control" autocomplete="off">
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <input type="hidden" Id="TaskThresholdDate" name="TaskThresholdDate" />
+                                    }
+                                    <div id="form-step-3" role="form" data-toggle="validator">
+                                        <div class="form-group">
+                                            <label for="TaskStartDate">Start Date</label>
+                                            <input name="TaskStartDate" id="TaskStartDate" type="datetime" required class="form-control" autocomplete="off">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div id="form-step-3" role="form" data-toggle="validator">
+                                        <div class="form-group">
+                                            <label for="TaskEstimateTime">End Date</label>
+                                            <input name="TaskEstimateTime" id="TaskEstimateTime" type="datetime" required class="form-control" autocomplete="off">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <input type="hidden" id="UserId" name="UserId" />
+                                    <input type="hidden" Id="TaskOwner" name="TaskOwner" />
+                                    <input type="hidden" Id="TaskOwnerId" name="TaskOwnerId" />
+                                    <input type="hidden" Id="TaskStaffId" name="TaskStaffId" />
+                                    <input type="hidden" Id="TaskPriority" name="TaskPriority" />
+                                    <input type="hidden" Id="TaskAdminInstructions" name="TaskAdminInstructions" />
+                                    <input type="hidden" Id="TaskThresholdDate" name="TaskThresholdDate" />
+                                    <input type="hidden" Id="TaskStartDate" name="TaskStartDate" />
+                                    <input type="hidden" Id="TaskEstimateTime" name="TaskEstimateTime" />}
+                            </div>
+                            <div id="step-5">
+                                <!--Reviews-->
+                                <button id="btnaddNewReview" type="button" class="btn btn-link btn-primary" onclick="addNewReviewRow()"><i class="material-icons">add</i></button>
+                                <div id="form-step-4" role="form" data-toggle="validator"></div>
+                            </div>
+                            <div id="step-6">
+                                <!--Comments-->
+                                <button id="btnaddNewComment" type="button" class="btn btn-link btn-primary" onclick="addNewCommentRow()"><i class="material-icons">add</i></button>
+                                <div id="form-step-5" role="form" data-toggle="validator"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="DeleteModalDialog" tabindex="-1" role="dialog" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DeleteModalLabel">Delete Task</h5>
+                <button id="btnDeleteModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="DeleteForm">
+                    <!-- Smart Wizard HTML -->
+                    <div id="deletesmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Delete Task<br /><small>Confirm Delete Task?</small></a></li>
+                        </ul>
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskName">Task Name</label>
+                                        <input class="form-control" id="TaskName" name="TaskName" disabled>
+                                        <input id="TaskId" name="TaskId" type="hidden">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteconfirmed()">Delete</button>
+                <button type="button" class="btn btn-outline-info" data-dismiss="modal">cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/core/jquery.min.js"></script>
+
+<script>
+    $(function () {
+        $("#TaskThresholdDate,#TaskStartDate,#TaskEstimateTime").datetimepicker({ format: "Y-m-d"});
+        $("#New").click(function () {
+            getObject(0);
+        });
+        $("#Search").click(function () {
+            getObjects($("#SearchForm").serialize());
+        });
+        $("#Clear").click(function () {
+            $(".form-control").val("");
+            getObjects({});
+        });
+        $("#Search").click();
+
+        //Smart Wizard
+        $("#editsmartwizard").on("showStep", function (e, anchorObject, stepNumber, stepDirection, stepPosition) {
+            //alert("You are on step "+stepNumber+" now");
+            if (stepPosition === 'first') {
+                $("#prev-btn").addClass('disabled');
+            } else if (stepPosition === 'final') {
+                $("#next-btn").addClass('disabled');
+            } else {
+                $("#prev-btn").removeClass('disabled');
+                $("#next-btn").removeClass('disabled');
+            }
+        });
+
+        // Toolbar extra buttons
+        var btnEditFinish = $('<button type=\'button\'></button>').text('Finish')
+            .addClass('btn btn-primary')
+            .on('click', function () {
+                if ($.trim($("#TaskStatusId", "#EditForm").val()) == "" || $.trim($("#TaskStatusId", "#EditForm").val())=="undefined") {
+                    alert("Please Select TaskStatus");
+                    return;
+                }
+                if ($("#EditForm").valid()) {
+
+                    var formdata = new FormData();
+                    var elementarray = $("#EditForm").serializeArray();
+                    $.each(elementarray, function (kp) {
+                        formdata.append(elementarray[kp].name, elementarray[kp].value);
+                    });
+                    var fileCtrls = $("input:file", "#EditForm");
+                    $.each(fileCtrls, function (i) {
+                        formdata.append("documents[" + i + "].formFile", document.getElementById("documents_" + i + "_file").files[0])
+                    });
+                    console.log(formdata);
+                    $.ajax({
+                        url: "/tasks/edit",
+                        data: formdata,
+                        processData: false,
+                        contentType: false,
+                        type: 'POST',
+                        success: function (data) {
+                            window.location.href = "/tasks/all"
+                        }
+                    });
+                }
+            });
+        var btnEditCancel = $('<button type=\'button\'></button>').text('Cancel')
+            .addClass('btn btn-danger')
+            .on('click', function () { $('#editsmartwizard').smartWizard("reset"); });
+
+        //Edit Smart Wizard 1
+        $('#editsmartwizard').smartWizard({
+            selected: 0, justified: true,
+            theme: 'arrows',
+            transitionEffect: 'slide-horizontal',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'both',
+                toolbarExtraButtons: [btnEditFinish, btnEditCancel]
+            }
+        });
+
+        //Delete Smart Wizard
+        $('#deletesmartwizard').smartWizard({
+            selected: 0,
+            theme: 'arrows',
+            transitionEffect: 'fade',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'none'
+            }
+        });
+
+        $("#TaskOwnerId", "#EditForm").change(function () {
+            $("#TaskOwner", "#EditForm").val($("#TaskOwnerId option:selected", "#EditForm").html());
+            getMaxPriority();
+        });
+        $("#TaskStaffId", "#EditForm").change(function () {
+            if ($("#incentives", "#EditForm").length != 0) {
+                $("#incentives", "#EditForm").empty();
+            }
+            addNewIncentiveRow();
+        });
+
+    });
+    function getObjects(searchterm) {
+        $.post("/tasks/gettasks", searchterm, function (tasks) {
+            var taskstr = "";
+            if (tasks && tasks.length > 0) {
+                for (var i = 0; i < tasks.length; i++) {
+                    taskstr += "<tr>";
+                    taskstr += "    <td>";
+                    taskstr += tasks[i].taskId
+                    taskstr += "    </td>";
+                    taskstr += "    <td>";
+                    taskstr += tasks[i].taskName;
+                    taskstr += "    </td>";
+                    taskstr += "    <td>";
+                    taskstr += tasks[i].taskStatusId;
+                    taskstr += "    </td>";
+                    if ("@(User.IsInRole("User"))" == "True") {
+                        taskstr += "    <td>";
+                        taskstr += tasks[i].taskStartDate;
+                        taskstr += "    </td>";
+                    }
+                    if ("@(!User.IsInRole("User"))" == "True") {
+
+                        taskstr += "    <td>";
+                        taskstr += tasks[i].user;
+                        taskstr += "    </td>";
+                        taskstr += "    <td>";
+                        taskstr += tasks[i].taskPriority;
+                        taskstr += "    </td>";
+                        if ("@(User.IsInRole("Admin"))" == "True") {
+                            taskstr += "    <td>";
+                            taskstr += tasks[i].taskThresholdDate || "NA";
+                            taskstr += "    </td>";
+                        }
+                        taskstr += "    <td>";
+                        taskstr += tasks[i].taskStartDate;
+                        taskstr += "    </td>";
+                        taskstr += "    <td>";
+                        taskstr += tasks[i].taskEstimateTime;
+                        taskstr += "    </td>";
+                        taskstr += "    <td>";
+                        taskstr += tasks[i].taskOwner;
+                        taskstr += "    </td>";
+                        taskstr += "    <td>";
+                        taskstr += tasks[i].staff;
+                        taskstr += "    </td>";
+                    }
+                    taskstr += "    <td class=\"text-primary\">";
+                    if ("@(User.IsInRole("Admin"))" === "True" || tasks[i].taskStatusId !== "AcceptedClosed") {
+                        taskstr += "        <a class=\"btn-sm btn-link btn-primary\" href=\"javascript:getObject(" + tasks[i].taskId + ")\"><i class=\"material-icons\">create</i></a>";
+                    } else {
+
+                    }
+                    if ("@(User.IsInRole("Admin"))" == "True") {
+                        taskstr += "        <a class=\"btn-sm btn-link btn-danger\"  href=\"javascript:deleteObject(" + tasks[i].taskId + ",'" + tasks[i].taskName + "')\" ><i class=\"material-icons\">delete_sweep</i></a>";
+                    }
+                    taskstr += "    </td>";
+
+                        taskstr += "</tr>";
+                    }
+            } else {
+                taskstr = "<tr><td>No Data Found.</td></tr>";
+            }
+            $("#List > tbody").html(taskstr);
+        });
+    }
+    function getMaxPriority() {
+        $.get("/tasks/getMaxTaskPriority?id=" + $("#TaskOwnerId", "#EditForm").val(), function (taskPriority) {
+            if (taskPriority) {
+                $("#TaskPriority", "#EditForm").val(taskPriority);
+            }
+        });
+    }
+
+    function fillStatusDDL(
+  waitingEnabled // Waiting-Admin - All Task quotation waiting in a queue with System
+ ,pendingEnabled // Pending - User - User will modify after accepting proposal
+ ,acceptedByAdminEnabled // AcceptedByAdmin - Admin will assign to TM
+ ,rejectedByAdminEnabled // RejectedByAdmin - Admin
+ ,assignedEnabled // Assigned - TaskManager will assign to SM
+ ,acceptedByStaffEnabled // AcceptedByStaff - StaffMember will assign to SM
+ ,rejectedByStaffEnabled // RejectedByStaff - StaffMember will assign to SM
+ ,inprogressEnabled // Inprogress - StaffMember
+ ,sentForReviewEnabled // SentForReview - StaffMember
+ ,acceptedInReviewEnabled // AcceptedInReview - TaskManager
+ ,rejectedInReviewEnabled // RejectedInReview - TaskManager
+ ,doneEnabled // Done - Admin
+ ,closedEnabled // Closed - Admin
+ ,acceptedClosedEnabled // AcceptedClosed - User
+    ) {
+        var str = "";
+        str += "<option " + (waitingEnabled ? "" : "disabled") + " value=\"Waiting\">Waiting</option>";
+        str += "<option " + (pendingEnabled ? "" : "disabled") + " value=\"Pending\">Pending</option>";
+        str += "<option " + (acceptedByAdminEnabled ? "" : "disabled") + " value=\"AcceptedByAdmin\">AcceptedByAdmin</option>";
+        str += "<option " + (rejectedByAdminEnabled ? "" : "disabled") + " value=\"RejectedByAdmin\">RejectedByAdmin</option>";
+        str += "<option " + (assignedEnabled ? "" : "disabled") + " value=\"Assigned\">Assigned</option>";
+        str += "<option " + (acceptedByStaffEnabled ? "" : "disabled") + " value=\"AcceptedByStaff\">AcceptedByStaff</option>";
+        str += "<option " + (rejectedByStaffEnabled ? "" : "disabled") + " value=\"RejectedByStaff\">RejectedByStaff</option>";
+        str += "<option " + (inprogressEnabled ? "" : "disabled") + " value=\"Inprogress\">Inprogress</option>";
+        str += "<option " + (sentForReviewEnabled ? "" : "disabled") + " value=\"SentForReview\">SentForReview</option>";
+        str += "<option " + (acceptedInReviewEnabled ? "" : "disabled") + " value=\"AcceptedInReview\">AcceptedInReview</option>";
+        str += "<option " + (rejectedInReviewEnabled ? "" : "disabled") + " value=\"RejectedInReview\">RejectedInReview</option>";
+        str += "<option " + (doneEnabled ? "" : "disabled") + " value=\"Done\">Done</option>";
+        str += "<option " + (closedEnabled ? "" : "disabled") + " value=\"Closed\">Closed</option>";
+        str += "<option " + (acceptedClosedEnabled ? "" : "disabled") + " value=\"AcceptedClosed\">AcceptedClosed</option>";
+        return str;
+    }
+    function fillUserDDLs(task) {
+        if ("@(!User.IsInRole("User"))" == "True") {
+            $.post("/common/gettaskowners", null, function (owners) {
+                var str = "<option value=\"\">-- Select --</option>";
+                if (owners && owners.length > 0) {
+                    for (var i = 0; i < owners.length; i++) {
+                        str += "<option value=\"" + owners[i].taskOwnerId + "\">" + owners[i].taskOwnerName + "</option>";
+                    }
+                } else {
+                    str = "<tr><td>No Data Found.</td></tr>";
+                }
+                if ("@(User.IsInRole("Admin"))" == "True") {
+                    $("#TaskOwnerId", "#EditForm").html(str);
+                }
+                else if ("@(User.IsInRole("TaskManager"))" == "True") {
+                    $("#TaskStaffId", "#EditForm").html(str);
+                }
+                $("#TaskOwnerId", "#EditForm").val((task && task.taskOwnerId) || "");
+                $("option[value!='" + ((task && task.taskOwnerId) || "") + "']", "#TaskOwnerId", "#EditForm").attr('disabled', $.inArray(task.taskStatusId, ["Pending", "AcceptedByAdmin"], 0) == -1);
+                $("#TaskStaffId", "#EditForm").val((task && task.taskStaffId) || "");
+                $("option[value!='" + ((task && task.taskStaffId) || "") + "']", "#TaskStaffId", "#EditForm").attr('disabled', $.inArray(task.taskStatusId, ["AcceptedByAdmin", "Assigned", "RejectedByStaff"], 0) == -1);
+            });
+            if ("@(User.IsInRole("Admin"))" == "True") {
+                $.post("/common/getusers", { roleName: "User" }, function (users) {
+                    var str = "<option value=\"\">-- Select --</option>";
+                    if (users && users.length > 0) {
+                        for (var i = 0; i < users.length; i++) {
+                            str += "<option value=\"" + users[i].id + "\">" + users[i].userName + "</option>";
+                        }
+                    } else {
+                        str = "<tr><td>No Data Found.</td></tr>";
+                    }
+                    $("#UserId", "#EditForm").html(str);
+                    $("#UserId", "#EditForm").val((task && task.userId) || "");
+                });
+            } else {
+                $("#UserId", "#EditForm").val((task && task.userId) || "");
+            }
+        }
+        else {
+            $("#TaskOwnerId", "#EditForm").val((task && task.taskOwnerId) || "");
+            $("#TaskStaffId", "#EditForm").val((task && task.taskStaffId) || "");
+            $("#UserId", "#EditForm").val((task && task.userId) || "");
+        }
+    }
+    function getObject(taskId) {
+
+        if (taskId > 0) {
+            $.get("/tasks/edittask?id=" + taskId, function (task) {
+                if (task) {
+                    $("#TaskId", "#EditForm").val(task.taskId);
+
+                    $("#TaskName", "#EditForm").val(task.taskName).attr("readonly",("@(User.IsInRole("TaskManager"))" == "True" || "@(User.IsInRole("Staff"))" == "True"));
+                    $("#TaskOwner", "#EditForm").val(task.taskOwner);
+                    $("#TaskAdminInstructions", "#EditForm").val(task.taskAdminInstructions);
+                    $("#TaskPriority", "#EditForm").val(task.taskPriority);
+
+                    fillUserDDLs(task);
+
+
+                    $("#TaskTitle", "#EditForm").val(task.taskTitle).attr("readonly", ("@(User.IsInRole("TaskManager"))" == "True" || "@(User.IsInRole("Staff"))" == "True"));
+
+                    console.log($.inArray(task.taskStatusId, ["AcceptedByAdmin", "Assigned", "RejectedByStaff"], 0) == -1);
+                    var taskStatusStr =
+                        fillStatusDDL(
+                            ("@(User.IsInRole("Admin"))" == "True" && (!task.taskStatusId || $.inArray(task.taskStatusId, ["Waiting"], 0) > -1))//Waiting - Admin - All Task quotation waiting in a queue with System
+                            , ("@(User.IsInRole("User"))" == "True" && $.inArray(task.taskStatusId, ["Waiting", "Pending"], 0) > -1)// Pending - User
+                            , ("@(User.IsInRole("Admin"))" == "True" && $.inArray(task.taskStatusId, ["Pending","AcceptedByAdmin"], 0) > -1) // AcceptedByAdmin - Admin will assign to TM
+                            , ("@(User.IsInRole("Admin"))" == "True" && $.inArray(task.taskStatusId, ["Pending","RejectedByAdmin"], 0) > -1) // RejectedByAdmin - Admin
+                            , ("@(User.IsInRole("TaskManager"))" == "True" && $.inArray(task.taskStatusId, ["AcceptedByAdmin", "Assigned", "RejectedByStaff"], 0) > -1) // Assigned - TaskManager will assign to SM
+                            , ("@(User.IsInRole("Staff"))" == "True" && $.inArray(task.taskStatusId, ["Assigned","AcceptedByStaff"], 0) > -1) // AcceptedByStaff - StaffMember
+                            , ("@(User.IsInRole("Staff"))" == "True" && $.inArray(task.taskStatusId, ["Assigned","RejectedByStaff"], 0) > -1) // RejectedByStaff - StaffMember
+                            , ("@(User.IsInRole("Staff"))" == "True" && $.inArray(task.taskStatusId, ["RejectedInReview", "AcceptedByStaff","Inprogress"], 0) > -1) // Inprogress - StaffMember
+                            , ("@(User.IsInRole("Staff"))" == "True" && $.inArray(task.taskStatusId, ["Inprogress","SentForReview"], 0) > -1) // SentForReview - StaffMember
+                            , ("@(User.IsInRole("TaskManager"))" == "True" && $.inArray(task.taskStatusId, ["SentForReview","AcceptedInReview"], 0) > -1) // AcceptedInReview - TaskManager
+                            , ("@(User.IsInRole("TaskManager"))" == "True" && $.inArray(task.taskStatusId, ["SentForReview","RejectedInReview"], 0) > -1) // RejectedInReview - TaskManager
+                            , ("@(User.IsInRole("Admin"))" == "True" && $.inArray(task.taskStatusId, ["AcceptedInReview", "Done"], 0) > -1) // Done - Admin
+                            , ("@(User.IsInRole("Admin"))" == "True" && $.inArray(task.taskStatusId, ["Done","Closed"], 0) > -1) // Closed - Admin
+                            , ("@(User.IsInRole("User"))" == "True" && $.inArray(task.taskStatusId, ["Closed","AcceptedClosed"], 0) > -1)// AcceptedClosed - User
+                        );
+
+                    $("#TaskStatusId", "#EditForm").html(taskStatusStr).val(task.taskStatusId);
+                    $("#TaskStartDate", "#EditForm").val(task.taskStartDate);
+                    $("#TaskEstimateTime", "#EditForm").val(task.taskEstimateTime);
+                    $("#TaskThresholdDate", "#EditForm").val(task.taskThresholdDate);
+
+                    $("#desc_TaskId", "#EditForm").val(task.taskId);
+                    if (task.descriptions && task.descriptions.length > 0) {
+                        $("#TaskDescriptionId", "#EditForm").val(task.descriptions[0].taskDescriptionId || 0);
+                        $("#DescTaskId", "#EditForm").val(task.descriptions[0].taskId || 0);
+                        $("#desc_Line1", "#EditForm").val(task.descriptions[0].taskDescLine1).attr("readonly",("@(User.IsInRole("TaskManager"))" == "True" || "@(User.IsInRole("Staff"))" == "True"));
+                        $("#desc_Line2", "#EditForm").val(task.descriptions[0].taskDescLine2).attr("readonly",("@(User.IsInRole("TaskManager"))" == "True" || "@(User.IsInRole("Staff"))" == "True"));
+                        $("#desc_Line3", "#EditForm").val(task.descriptions[0].taskDescLine3).attr("readonly",("@(User.IsInRole("TaskManager"))" == "True" || "@(User.IsInRole("Staff"))" == "True"));
+                        $("#desc_Line4", "#EditForm").val(task.descriptions[0].taskDescLine4).attr("readonly",("@(User.IsInRole("TaskManager"))" == "True" || "@(User.IsInRole("Staff"))" == "True"));
+                    }
+                    else {
+                        $("#DescTaskId", "#EditForm").val(task.taskId);
+                    }
+                    if ("@(!User.IsInRole("User"))" == "True" || ("@(User.IsInRole("User"))" == "True" && $.inArray(task.taskStatusId, ["Done", "Closed", "AcceptedClosed"], 0) > -1)) {
+                        //reviews
+                        if (task.reviews && task.reviews.length > 0) {
+                            var str = "";
+                            for (var i = 0; i < task.reviews.length; i++) {
+                                str += " <div class=\"form-group border\">";
+                                str += " <button @(Html.Raw(!User.IsInRole("TaskManager")?"disabled":"")) type=\"button\" class=\"btn btn-link btn-danger\" onclick=\"deletereview(" + i + ")\"><i class=\"material-icons\">delete_sweep</i></button>";
+                                str += "     <label for=\"TaskOwner\">Review </label>";
+                                str += "     <textarea @(Html.Raw(!User.IsInRole("TaskManager")? "readonly" : "")) onchange=\"changeReviewStatus(" + i + ")\" Id=\"reviews_" + i + "_TaskReviewComment\" name=\"reviews[" + i + "].TaskReviewComment\" class=\"form-control\" placeholder=\"Review\">" + task.reviews[i].taskReviewComment + "</textarea>";
+                                str += "     <textarea @(Html.Raw(!User.IsInRole("TaskManager")? "readonly" : "")) onchange=\"changeReviewStatus(" + i + ")\" Id=\"reviews_" + i + "_TaskReviewActions\" name=\"reviews[" + i + "].TaskReviewActions\" class=\"form-control\" placeholder=\"Action\">" + task.reviews[i].taskReviewActions + "</textarea>";
+                                str += "     <input type=\"hidden\" Id=\"reviews_" + i + "_TaskReviewDate\" name=\"reviews[" + i + "].TaskReviewDate\" value=\"" + task.reviews[i].taskReviewDate + "\" />";
+                                str += "     <input type=\"hidden\" Id=\"reviews_" + i + "_TaskReviewCommentId\" name=\"reviews[" + i + "].TaskReviewCommentId\"  value=\"" + task.reviews[i].taskReviewCommentId + "\"  />";
+                                str += "     <input type=\"hidden\" Id=\"reviews_" + i + "_ReviewTaskId\" name=\"reviews[" + i + "].ReviewTaskId\" value=\"" + task.reviews[i].reviewTaskId + "\" />";
+                                str += "     <input type=\"hidden\" Id=\"reviews_" + i + "_ChangeState\" name=\"reviews[" + i + "].ChangeState\" value=\"" + task.reviews[i].changeState + "\"  />";
+                                str += "     <div class=\"help-block with-errors\"></div>";
+                                str += " </div>";
+                            }
+                            $("#form-step-4", "#EditForm").html(str);
+                            revIndex = task.reviews.length;
+                        }
+
+                        //deliverables
+                        if (task.comments && task.comments.length > 0) {
+                            var str = "";
+                            for (var i = 0; i < task.comments.length; i++) {
+                                str += " <div class=\"form-group border\">";
+                                str += " <button @(Html.Raw(!User.IsInRole("Staff")?"disabled":"")) type=\"button\" class=\"btn btn-link btn-danger\" onclick=\"deletecomment(" + i + ")\"><i class=\"material-icons\">delete_sweep</i></button>";
+                                str += "     <label for=\"TaskOwner\">Comment</label>";
+                                str += "     <textarea @(Html.Raw(!User.IsInRole("Staff")? "readonly" : "")) onchange=\"changeCommentStatus(" + i + ")\" Id=\"comments_" + i + "_TaskComment\" name=\"comments[" + i + "].TaskComment\" class=\"form-control\" placeholder=\"comment\">" + task.comments[i].taskComment + "</textarea>";
+                                str += "     <input type=\"hidden\" Id=\"comments_" + i + "_TaskCommentDate\" name=\"comments[" + i + "].TaskCommentDate\" value=\"" + task.comments[i].taskCommentDate + "\" />";
+                                str += "     <input type=\"hidden\" Id=\"comments_" + i + "_TaskCommentId\" name=\"comments[" + i + "].TaskCommentId\"  value=\"" + task.comments[i].taskCommentId + "\"  />";
+                                str += "     <input type=\"hidden\" Id=\"comments_" + i + "_CommentTaskId\" name=\"comments[" + i + "].CommentTaskId\" value=\"" + task.comments[i].commentTaskId + "\" />";
+                                str += "     <input type=\"hidden\" Id=\"comments_" + i + "_ChangeState\" name=\"comments[" + i + "].ChangeState\" value=\"" + task.comments[i].changeState + "\"  />";
+                                str += "     <div class=\"help-block with-errors\"></div>";
+                                str += " </div>";
+                            }
+                            $("#form-step-5", "#EditForm").html(str);
+                            comIndex = task.comments.length;
+                        }
+                    }
+                    //documents
+                    if (task.documents && task.documents.length > 0) {
+                        var str = "";
+                        for (var i = 0; i < task.documents.length; i++) {
+                            str += " <div class=\"form-group border\">";
+                            str += " <button type=\"button\" class=\"btn btn-link btn-danger\" onclick=\"deletefile(" + i + ")\"><i class=\"material-icons\">delete_sweep</i></button>";
+                            str += "     <label for=\"TaskOwner\">File 1</label>";
+                            str += "     <div class=\"file-field\">";
+                            str += "         <div class=\"btn btn-primary btn-sm float-left\">";
+                            str += "             <span>Choose file</span>";
+                            str += "             <input onchange=\"onFileChange(" + i + ",event)\" type=\"file\" Id=\"documents_" + i + "_file\" name=\"documents[" + i + "].file\" value=\"" + task.documents[i].documentPhysicalPath + "\" />";
+                            str += "         </div>";
+                            var path = task.documents[i].documentPhysicalPath;
+                            str += "         <div class=\"file-path-wrapper\">";
+                            str += "             <input name=\"documents[" + i + "].filename\" Id=\"documents_" + i + "_filename\" readonly class=\"form-control file-path validate\" type=\"text\" placeholder=\"Upload your file\" value=\"" +path? path.substring(path.lastIndexOf('\\') + 1):"" + "\"/>";
+                            str += "             <input type=\"hidden\" Id=\"documents_" + i + "_DocumentPhysicalPath\" name=\"documents[" + i + "].DocumentPhysicalPath\" value=\"" + task.documents[i].documentPhysicalPath + "\" />";
+                            if (path) {
+                                str += " <a target=\_blank\"  class=\"btn btn-link btn-danger\" href=\"/tasks/downloadfile?id=" + task.documents[i].documentId + "&filename=" + path.substring(path.lastIndexOf('\\') + 1)+"\"><i class=\"material-icons\">system_update_alt</i></a>";
+                            }
+                            str += "         </div>";
+                            str += "     </div>";
+                            str += "     <textarea onchange=\"changeDocumentStatus(" + i + ")\"  Id=\"documents_" + i + "_DocumentComments\" name=\"documents[" + i + "].DocumentComments\" class=\"form-control\" placeholder=\"Comments\">" + task.documents[i].documentComments + "</textarea>";
+                            str += "     <input type=\"hidden\" Id=\"documents_" + i + "_DocumentDate\" name=\"documents[" + i + "].DocumentDate\" value=\"" + task.documents[i].documentDate + "\" />";
+                            str += "     <input type=\"hidden\" Id=\"documents_" + i + "_DocumentId\" name=\"documents[" + i + "].DocumentId\"  value=\"" + task.documents[i].documentId + "\"  />";
+                            str += "     <input type=\"hidden\" Id=\"documents_" + i + "_DocumentKeywordId\" name=\"documents[" + i + "].DocumentKeywordId\"  value=\"" + task.documents[i].documentKeywordId + "\"  />";
+                            str += "     <input type=\"hidden\" Id=\"documents_" + i + "_DocumentOwnerId\" name=\"documents[" + i + "].DocumentOwnerId\" value=\"" + task.documents[i].documentOwnerId + "\"  />";
+                            str += "     <input type=\"hidden\" Id=\"documents_" + i + "_DocumentTaskId\" name=\"documents[" + i + "].DocumentTaskId\" value=\"" + task.documents[i].documentTaskId + "\" />";
+                            str += "     <input type=\"hidden\" Id=\"documents_" + i + "_ChangeState\" name=\"documents[" + i + "].ChangeState\" value=\"" + task.documents[i].changeState + "\"  />";
+                            str += "     <div class=\"help-block with-errors\"></div>";
+                            str += " </div>";
+                        }
+                        $("#form-step-2", "#EditForm").html(str);
+                        $("button:button,input:file", "#form-step-2", "#EditForm").attr("disabled", ("@(User.IsInRole("TaskManager"))" == "True" || "@(User.IsInRole("Staff"))" == "True"));
+                        $("textarea","#form-step-2", "#EditForm").attr("readonly",("@(User.IsInRole("TaskManager"))" == "True" || "@(User.IsInRole("Staff"))" == "True"));
+                        docIndex = task.documents.length;
+                    }
+
+                    //incentives
+                     if (task.incentives && task.incentives.length > 0) {
+                         var str = "";
+                         incentiveDecided = task.incentives[0].incentivesDecided;
+                         assignedDate = task.incentives[0].assignedDate;
+                         //_IncentivesAdd_IncentivesAdd_IncentivesAdd_IncentivesAdd_IncentivesAdd_IncentivesAdd_IncentivesAdd
+                         $("#btnaddNewIncentive", "#EditForm").prop("disabled", ("@(!User.IsInRole("TaskManager"))" == "True" || ("@(User.IsInRole("TaskManager"))" == "True" && (incentiveDecided <= task.incentivesPaidTotal || (incentiveDecided > 0 && $.inArray(task.taskStatusId,["Assigned", "RejectedByStaff"]) > -1)))));
+
+                         for (var i = 0; i < task.incentives.length; i++) {
+                            str += " <div class=\"form-group border\">";
+                            str += "     <button " + ("@(!User.IsInRole("TaskManager"))" == "True" ? "disabled" : "") + " type=\"button\" class=\"btn btn-link btn-danger\" onclick=\"deleteincentive(" + i + ")\"><i class=\"material-icons\">delete_sweep</i></button>";
+
+                            //_IncentivesDecided_IncentivesDecided_IncentivesDecided_IncentivesDecided_IncentivesDecided_IncentivesDecided_IncentivesDecided_IncentivesDecided
+                            str += "     <input " + (("@(!User.IsInRole("TaskManager"))" == "True" || ("@(User.IsInRole("TaskManager"))" == "True" && (incentiveDecided > 0 && task.taskStatusId!="RejectedByStaff"))) ? "readonly" : "") + " onchange=\"changeIncentivesStatus(" + i + ")\" Id=\"incentives_" + i + "_IncentivesDecided\" name=\"incentives[" + i + "].IncentivesDecided\" class=\"form-control\" placeholder=\"Incentives Decided\" value=\"" + task.incentives[i].incentivesDecided + "\"/>";
+
+                            //_IncentivesPaid_IncentivesPaid_IncentivesPaid_IncentivesPaid_IncentivesPaid_IncentivesPaid_IncentivesPaid_IncentivesPaid_IncentivesPaid_IncentivesPaid
+                             str += "     <input " + (("@(!User.IsInRole("TaskManager"))" == "True" || ("@(User.IsInRole("TaskManager"))" == "True" && (incentiveDecided <= task.incentivesPaidTotal || (incentiveDecided > 0 && $.inArray(task.taskStatusId,["Assigned", "RejectedByStaff"]) > -1)))) ? "readonly" : "") + " onchange=\"changeIncentivesStatus(" + i + ")\" Id=\"incentives_" + i + "_IncentivesPaid\" name=\"incentives[" + i + "].IncentivesPaid\" class=\"form-control\" placeholder=\"Incentives Paid\" value=\"" + task.incentives[i].incentivesPaid + "\"/>";
+
+                            str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_IncentivesPaidDate\" name=\"incentives[" + i + "].IncentivesPaidDate\" value=\"" + task.incentives[i].incentivesPaidDate + "\" />";
+                            str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_IncetiveId\" name=\"incentives[" + i + "].IncetiveId\"  value=\"" + task.incentives[i].incetiveId + "\"  />";
+                            str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_StaffUserId\" name=\"incentives[" + i + "].StaffUserId\" value=\"" + task.incentives[i].staffUserId + "\" />";
+                            str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_AssignedBy\" name=\"incentives[" + i + "].AssignedBy\" value=\"" + task.incentives[i].assignedBy + "\" />";
+                            str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_AssignedDate\" name=\"incentives[" + i + "].AssignedDate\" value=\"" + task.incentives[i].assignedDate + "\" />";
+                            str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_TaskId\" name=\"incentives[" + i + "].TaskId\" value=\"" + task.incentives[i].taskId + "\" />";
+                            str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_ChangeState\" name=\"incentives[" + i + "].ChangeState\" value=\"" + task.incentives[i].changeState + "\"  />";
+                            str += "     <div class=\"help-block with-errors\"></div>";
+                            str += " </div>";
+                        }
+                        $("#incentives", "#EditForm").html(str);
+                         incIndex = task.incentives.length;
+                    }
+                     else {
+                         incentiveDecided = 0;
+                         assignedDate = "@(DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))";
+                     }
+                }
+                else {
+
+                }
+                $("#EditModal").click();
+                $("#EditModalLabel", "#EditModalDialog").text("Edit Task");
+            });
+        }
+        else {
+            fillUserDDLs(null);
+            var taskStatusStr = fillStatusDDL(
+                              true
+                            , false
+                            , false
+                            , false
+                            , false
+                            , false
+                            , false
+                            , false
+                            , false
+                            , false
+                            , false
+                            , false
+                            , false
+                            , false);
+            $("#TaskStatusId", "#EditForm").html(taskStatusStr).val("Waiting");
+            $("#EditModal").click();
+            $("#EditModalLabel", "#EditModalDialog").text("Add Task");
+            $("input,select,textarea", "#EditForm").val("");
+            $("#form-step-2,#form-step-4,#form-step-5", "#EditForm").empty();
+        }
+
+        if ("@(!User.IsInRole("TaskManager"))" == "True") {
+            $("#btnaddNewReview", "#EditForm").prop("disabled",true);
+        }
+        if ("@(!User.IsInRole("Staff"))" == "True") {
+            $("#btnaddNewComment", "#EditForm").prop("disabled", true);
+        }
+        if ("@(User.IsInRole("TaskManager"))" == "True" || "@(User.IsInRole("Staff"))" == "True") {
+            $("#btnaddNewDocRow", "#EditForm").prop("disabled", true);
+        }
+     }
+    function deleteObject(taskId, taskName) {
+        $("#TaskId", "#DeleteForm").val(taskId);
+        $("#TaskName", "#DeleteForm").val(taskName);
+        $("#DeleteModal").click();
+    }
+    function deleteconfirmed() {
+        $.get("/tasks/delete?id=" + $("#TaskId", "#DeleteForm").val(), function () { window.location.href = "/tasks/all" });
+    }
+
+    //reviews
+    var revIndex = 0;
+    function changeReviewStatus(i) {
+         if ($("#reviews_" + i + "_ChangeState", "#EditForm").val() != "@((byte)Microsoft.EntityFrameworkCore.EntityState.Added)") {
+             $("#reviews_" + i + "_ChangeState", "#EditForm").val("@((byte)Microsoft.EntityFrameworkCore.EntityState.Modified)");
+         }
+    }
+
+    function addNewReviewRow() {
+        var i = revIndex;
+        var str = "";
+         str += " <div class=\"form-group border\">";
+         str += " <button type=\"button\" class=\"btn btn-link btn-danger\" onclick=\"deletereview(" + i + ")\"><i class=\"material-icons\">delete_sweep</i></button>";
+         str += "     <label for=\"TaskOwner\">Review</label>";
+         str += "     <textarea Id=\"reviews_" + i + "_TaskReviewComment\" name=\"reviews[" + i + "].TaskReviewComment\" class=\"form-control\" placeholder=\"Review\"></textarea>";
+         str += "     <textarea Id=\"reviews_" + i + "_TaskReviewActions\" name=\"reviews[" + i + "].TaskReviewActions\" class=\"form-control\" placeholder=\"Action\"></textarea>";
+         str += "     <input type=\"hidden\" Id=\"reviews_" + i + "_TaskReviewDate\" name=\"reviews[" + i + "].TaskReviewDate\" value=\"@(DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))\" />";
+         str += "     <input type=\"hidden\" Id=\"reviews_" + i + "_TaskReviewCommentId\" name=\"reviews[" + i + "].TaskReviewCommentId\"  value=\"\"  />";
+         str += "     <input type=\"hidden\" Id=\"reviews_" + i + "_ReviewTaskId\" name=\"reviews[" + i + "].ReviewTaskId\" value=\"\" />";
+         str += "     <input type=\"hidden\" Id=\"reviews_" + i + "_ChangeState\" name=\"reviews[" + i + "].ChangeState\" value=\"@((byte)Microsoft.EntityFrameworkCore.EntityState.Added)\"  />";
+         str += "     <div class=\"help-block with-errors\"></div>";
+         str += " </div>";
+        console.log(str); console.log($("#form-step-4", "#EditForm").length);
+        if (revIndex == 0 ) {
+            $("#form-step-4", "#EditForm").html(str);
+        }
+        else
+        { $("#form-step-4", "#EditForm").append(str); }
+        revIndex++;
+    }
+
+    function deletereview(i) {
+        $("#reviews_" + i + "_TaskReviewCommentId").parent().hide();
+        $("#reviews_" + i + "_ChangeState").val("@((byte)Microsoft.EntityFrameworkCore.EntityState.Deleted)");
+    }
+
+    var comIndex = 0;
+    function changeCommentStatus(i) {
+         if ($("#comments_" + i + "_ChangeState", "#EditForm").val() != "@((byte)Microsoft.EntityFrameworkCore.EntityState.Added)") {
+             $("#comments_" + i + "_ChangeState", "#EditForm").val("@((byte)Microsoft.EntityFrameworkCore.EntityState.Modified)");
+         }
+    }
+
+    function addNewCommentRow() {
+        var i = comIndex;
+        var str = "";
+          str += " <div class=\"form-group border\">";
+          str += " <button type=\"button\" class=\"btn btn-link btn-danger\" onclick=\"deletecomment(" + i + ")\"><i class=\"material-icons\">delete_sweep</i></button>";
+          str += "     <label for=\"TaskOwner\">Comment</label>";
+          str += "     <textarea Id=\"comments_" + i + "_TaskComment\" name=\"comments[" + i + "].TaskComment\" class=\"form-control\" placeholder=\"comment\"></textarea>";
+          str += "     <input type=\"hidden\" Id=\"comments_" + i + "_TaskCommentDate\" name=\"comments[" + i + "].TaskCommentDate\" value=\"@(DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))\" />";
+          str += "     <input type=\"hidden\" Id=\"comments_" + i + "_TaskCommentId\" name=\"comments[" + i + "].TaskCommentId\"  value=\"\"  />";
+          str += "     <input type=\"hidden\" Id=\"comments_" + i + "_CommentTaskId\" name=\"comments[" + i + "].CommentTaskId\" value=\"\" />";
+          str += "     <input type=\"hidden\" Id=\"comments_" + i + "_ChangeState\" name=\"comments[" + i + "].ChangeState\" value=\"@((byte)Microsoft.EntityFrameworkCore.EntityState.Added)\"  />";
+          str += "     <div class=\"help-block with-errors\"></div>";
+          str += " </div>";
+        if (comIndex == 0) {
+            $("#form-step-5", "#EditForm").html(str);
+        }
+        else
+        { $("#form-step-5", "#EditForm").append(str); }
+        comIndex++;
+    }
+
+    function deletecomment(i) {
+        $("#comments_" + i + "_TaskCommentId").parent().hide();
+        $("#comments_" + i + "_ChangeState").val("@((byte)Microsoft.EntityFrameworkCore.EntityState.Deleted)");
+    }
+
+    //document
+    var docIndex = 0;
+    function changeDocumentStatus(i) {
+        if ($("#documents_" + i + "_ChangeState", "#EditForm").val() != "@((byte)Microsoft.EntityFrameworkCore.EntityState.Added)") {
+            $("#documents_" + i + "_ChangeState", "#EditForm").val("@((byte)Microsoft.EntityFrameworkCore.EntityState.Modified)");
+         }
+    }
+    function onFileChange(i,e) {
+        $("#documents_" + i + "_filename").val(e.target.files[0].name);
+        changeDocumentStatus(i);
+    }
+     function addNewDocRow() {
+        var i = docIndex;
+        var str = "";
+        str += " <div class=\"form-group border\">";
+        str += " <button type=\"button\" class=\"btn btn-link btn-danger\" onclick=\"deletefile(" + i + ")\"><i class=\"material-icons\">delete_sweep</i></button>";
+        str += "     <label for=\"TaskOwner\">File 1</label>";
+        str += "     <div class=\"file-field\">";
+        str += "         <div class=\"btn btn-primary btn-sm float-left\">";
+        str += "             <span>Choose file</span>";
+        str += "             <input onchange=\"onFileChange(" + i + ",event)\"  type=\"file\" Id=\"documents_" + i + "_file\" name=\"documents[" + i + "].file\" value=\"\" />";
+        str += "         </div>";
+        str += "         <div class=\"file-path-wrapper\">";
+        str += "             <input  name=\"documents[" + i + "].filename\" Id=\"documents_" + i + "_filename\" readonly class=\"form-control file-path validate\" type=\"text\" placeholder=\"Upload your file\" />";
+        str += "         </div>";
+        str += "     </div>";
+        str += "     <textarea Id=\"documents_" + i + "_DocumentComments\" name=\"documents[" + i + "].DocumentComments\" class=\"form-control\" placeholder=\"Comments\"></textarea>";
+        str += "     <input type=\"hidden\" Id=\"documents_" + i + "_DocumentDate\" name=\"documents[" + i + "].DocumentDate\" value=\"@(DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))\" />";
+        str += "     <input type=\"hidden\" Id=\"documents_" + i + "_DocumentId\" name=\"documents[" + i + "].DocumentId\"  value=\"\"  />";
+        str += "     <input type=\"hidden\" Id=\"documents_" + i + "_DocumentKeywordId\" name=\"documents[" + i + "].DocumentKeywordId\"  value=\"\"  />";
+        str += "     <input type=\"hidden\" Id=\"documents_" + i + "_DocumentOwnerId\" name=\"documents[" + i + "].DocumentOwnerId\" value=\"" + $("#TaskOwnerId", "#EditForm").val() + "\"  />";
+        str += "     <input type=\"hidden\" Id=\"documents_" + i + "_DocumentTaskId\" name=\"documents[" + i + "].DocumentTaskId\" value=\"\" />";
+        str += "     <input type=\"hidden\" Id=\"documents_" + i + "_ChangeState\" name=\"documents[" + i + "].ChangeState\" value=\"@((byte)Microsoft.EntityFrameworkCore.EntityState.Added)\"  />";
+        str += "     <div class=\"help-block with-errors\"></div>";
+        str += " </div>";
+         if (docIndex == 0) {
+            $("#form-step-2", "#EditForm").html(str);
+        }
+        else
+        { $("#form-step-2", "#EditForm").append(str); }
+        docIndex++;
+    }
+
+    function deletefile(i) {
+        $("#documents_" + i + "_DocumentId").parent().hide();
+        $("#documents_" + i + "_ChangeState").val("@((byte)Microsoft.EntityFrameworkCore.EntityState.Deleted)");
+    }
+
+    //Incentive
+    var incIndex = 0;
+    var incentiveDecided = 0;
+    var assignedDate = "@(DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))";
+    function changeIncentivesStatus(i) {
+        if ($("#incentives_" + i + "_ChangeState", "#EditForm").val() != "@((byte)Microsoft.EntityFrameworkCore.EntityState.Added)") {
+            $("#incentives_" + i + "_ChangeState", "#EditForm").val("@((byte)Microsoft.EntityFrameworkCore.EntityState.Modified)");
+         }
+    }
+
+    function addNewIncentiveRow() {
+        var i = incIndex;
+        var str = "";
+         str += " <div class=\"form-group border\">";
+         str += "     <button type=\"button\" class=\"btn btn-link btn-danger\" onclick=\"deleteincentive(" + i + ")\"><i class=\"material-icons\">delete_sweep</i></button>";
+         str += "     <input " + (incentiveDecided > 0 ? "readonly" : "") + " onchange=\"changeIncentivesStatus(" + i + ")\" Id=\"incentives_" + i + "_IncentivesDecided\" name=\"incentives[" + i + "].IncentivesDecided\" class=\"form-control\" placeholder=\"Incentives Decided\" value=\"" + incentiveDecided + "\"/>";
+         str += "     <input " + (incentiveDecided == 0 ? "readonly" : "") + " onchange=\"changeIncentivesStatus(" + i + ")\" Id=\"incentives_" + i + "_IncentivesPaid\" name=\"incentives[" + i + "].IncentivesPaid\" class=\"form-control\" placeholder=\"Incentives Paid\" value=\"0\"/>";
+         str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_IncentivesPaidDate\" name=\"incentives[" + i + "].IncentivesPaidDate\" value=\"@(DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))\" />";
+         str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_IncetiveId\" name=\"incentives[" + i + "].IncetiveId\"  value=\"0\"  />";
+         str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_StaffUserId\" name=\"incentives[" + i + "].StaffUserId\" value=\"" + $("#TaskStaffId", "#EditForm").val() + "\" />";
+         str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_AssignedBy\" name=\"incentives[" + i + "].AssignedBy\" value=\"" + $("#TaskOwnerId", "#EditForm").val() + "\" />";
+         str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_AssignedDate\" name=\"incentives[" + i + "].AssignedDate\" value=\"" + assignedDate + "\" />";
+         str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_TaskId\" name=\"incentives[" + i + "].TaskId\" value=\"" + $("#TaskId", "#EditForm").val() + "\" />";
+         str += "     <input type=\"hidden\" Id=\"incentives_" + i + "_ChangeState\" name=\"incentives[" + i + "].ChangeState\" value=\"@((byte)Microsoft.EntityFrameworkCore.EntityState.Added)\"  />";
+         str += "     <div class=\"help-block with-errors\"></div>";
+         str += " </div>";
+        if (incIndex == 0) {
+            $("#incentives", "#EditForm").html(str);
+        }
+        else
+        { $("#incentives", "#EditForm").append(str); }
+        incIndex++;
+    }
+
+    function deleteincentive(i) {
+        $("#incentives_" + i + "_IncetiveId").parent().hide();
+        $("#incentives_" + i + "_ChangeState").val("@((byte)Microsoft.EntityFrameworkCore.EntityState.Deleted)");
+    }
+</script>

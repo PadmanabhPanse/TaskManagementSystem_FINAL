@@ -1,0 +1,635 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor _httpContextAccessor;
+@model TaskManagementSystem.Models.ListSearchModels.SearchQuotation
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Quotations";
+    ISession Session = _httpContextAccessor.HttpContext.Session;
+}
+@if (User.IsInRole("Admin") || User.IsInRole("User"))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header card-header-warning">
+                    <h4 class="card-title ">Quotations</h4>
+                </div>
+                <div class="card-body">
+                    <form class="mt-3" id="SearchForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group bmd-form-group">
+                                    <label asp-for="Title" class="bmd-label-floating">Title</label>
+                                    <input asp-for="Title" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group bmd-form-group">
+                                    <label asp-for="QuoteStatus" class="bmd-label-floating">Status</label>
+                                    <input asp-for="QuoteStatus" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group bmd-form-group">
+                                    <label asp-for="QuotationDate" class="bmd-label-floating">Quotation Date</label>
+                                    <input asp-for="QuotationDate" id="TaskStartDate" type="text" class="form-control" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group bmd-form-group">
+                                    <label asp-for="ConversionDate" class="bmd-label-floating">Conversion Date</label>
+                                    <input asp-for="ConversionDate" id="TaskEstimateTime" type="text" class="form-control" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-10">
+                                <button id="Search" type="button" class="btn btn-primary">Search</button>
+                                <button id="Clear" type="button" class="btn btn-primary">Clear</button>
+                                <button id="EditModal" type="button" data-toggle="modal" data-target="#EditModalDialog" style="display:none;">Modal</button>
+                                <button id="DeleteModal" type="button" data-toggle="modal" data-target="#DeleteModalDialog" style="display:none;">Modal</button>
+                                <button id="New" type="button" class="btn btn-primary"><i class="material-icons">add</i> New</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="table-responsive">
+                        <table id="List" class="table">
+                            <thead class=" text-primary">
+                                <tr>
+                                    <th>
+                                        ID
+                                    </th>
+                                    <th>
+                                        Title
+                                    </th>
+                                    <th>
+                                        Quote User
+                                    </th>
+                                    <th>
+                                        Quotation Date
+                                    </th>
+                                    <th>
+                                        Conversion Date
+                                    </th>
+                                    <th>
+                                        Quotation Status
+                                    </th>
+                                    <th>
+                                        Tax Type
+                                    </th>
+                                    <th>
+                                        Country
+                                    </th>
+                                    <th>
+                                        Total Cost
+                                    </th>
+                                    <th>
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else if (User.IsInRole("QuoteUser"))
+{
+    <button id="EditModal" type="button" data-toggle="modal" data-target="#EditModalDialog" style="display:none;">Modal</button>
+    <button id="DeleteModal" type="button" data-toggle="modal" data-target="#DeleteModalDialog">Modal</button>
+    <button id="New" type="button" class="btn btn-primary" style="display:none;"><i class="material-icons">add</i> New</button>
+}
+<!-- Modal -->
+<div class="modal fade" id="EditModalDialog" tabindex="-1" role="dialog" aria-labelledby="EditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditModalLabel"></h5>
+                <button id="btnEditModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="EditForm">
+
+                    <!-- Smart Wizard HTML -->
+                    <div id="editsmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Quotation Details<br /><small>Basic Information</small></a></li>
+                            <li><a href="#step-2">Tasks<br /><small>Task Details</small></a></li>
+                        </ul>
+
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="Title">Title</label>
+                                        <input class="form-control" id="Title" name="Title" required autocomplete="off">
+                                        <input id="QuoteId" name="QuoteId" type="hidden">
+                                        <input id="UserId" name="UserId" type="hidden">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="Description">Description</label>
+                                        <textarea id="Description" name="Description" required class="form-control" cols="10" rows="5"></textarea>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaxType">Tax Type</label>
+                                        <select id="TaxType" name="TaxType" required class="form-control" cols="10" rows="5"></select>
+                                        <input type="hidden" id="TaxRate" name="TaxRate">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="Country">Country</label>
+                                        <select id="Country" name="Country" required class="form-control" cols="10" rows="5"></select>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="QuotationDate">Quotation Date</label>
+                                        <input class="form-control" id="QuotationDate" name="QuotationDate" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="ConversionDate">Conversion Date</label>
+                                        <input class="form-control" id="ConversionDate" name="ConversionDate" required autocomplete="off">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TotalCost">Total Cost</label>
+                                        <select id="Currency" name="Currency" required class="form-control" cols="10" rows="5"></select>
+                                        <input class="form-control" id="TotalCost" name="TotalCost" required autocomplete="off" readonly>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <div id="form-step-0" role="form" data-toggle="validator">
+                                        <div class="form-group">
+                                            <label for="TotalCost"><b>Currency Conversion</b></label>
+                                            <select id="ToCurrency" name="ToCurrency" required class="form-control" cols="10" rows="5"></select>
+                                            <input class="form-control" id="ConvertedCost" name="ConvertedCost" autocomplete="off" readonly>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>}
+
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="QuoteStatus">Quotation Status</label>
+                                        <select id="QuoteStatus" name="QuoteStatus" required class="form-control">
+                                        </select>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="step-2">
+                                <!--Tasks-->
+                                <button id="btnAddTask" type="button" class="btn btn-link btn-primary" onclick="addTaskRow()"><i class="material-icons">add</i></button>
+                                <div id="form-step-1" role="form" data-toggle="validator"></div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="DeleteModalDialog" tabindex="-1" role="dialog" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DeleteModalLabel">Delete Task</h5>
+                <button id="btnDeleteModalDialog" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="mt-3" id="DeleteForm">
+                    <!-- Smart Wizard HTML -->
+                    <div id="deletesmartwizard">
+                        <ul>
+                            <li><a href="#step-1">Delete Quotation<br /><small>Confirm Delete Quotation?</small></a></li>
+                        </ul>
+                        <div>
+                            <div id="step-1">
+                                <div id="form-step-0" role="form" data-toggle="validator">
+                                    <div class="form-group">
+                                        <label for="TaskName">Title</label>
+                                        <input class="form-control" id="Title" name="Title" disabled>
+                                        <input id="QuoteId" name="QuoteId" type="hidden">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteconfirmed()">Delete</button>
+                <button type="button" class="btn btn-outline-info" data-dismiss="modal">cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/core/jquery.min.js"></script>
+
+<script>
+    $(function () {
+        //$("#QuotationDate,#ConversionDate").datetimepicker({ format: "Y-m-d"});
+        $("#New").click(function () {
+            getObject(0);
+        });
+        $("#Search").click(function () {
+            getObjects($("#SearchForm").serialize());
+        });
+        $("#Clear").click(function () {
+            $(".form-control").val("");
+            getObjects({});
+        });
+
+        //Smart Wizard
+        $("#editsmartwizard").on("showStep", function (e, anchorObject, stepNumber, stepDirection, stepPosition) {
+            //alert("You are on step "+stepNumber+" now");
+            if (stepPosition === 'first') {
+                $("#prev-btn").addClass('disabled');
+            } else if (stepPosition === 'final') {
+                $("#next-btn").addClass('disabled');
+            } else {
+                $("#prev-btn").removeClass('disabled');
+                $("#next-btn").removeClass('disabled');
+            }
+        });
+
+        // Toolbar extra buttons
+        var btnEditFinish = $('<button type=\'button\'></button>').text('Finish')
+            .addClass('btn btn-primary')
+            .on('click', function () {
+                if ($.trim($("#QuoteStatus", "#EditForm").val()) == "" || $.trim($("#QuoteStatus", "#EditForm").val()) == "undefined") {
+                    alert("Please Select Quotation Status");
+                    return;
+                }
+                if ($("#EditForm").valid()) {
+                    $.post("/quotations/edit", $("#EditForm").serialize(), function () {
+                            window.location.href = "/quotations/index"
+                    });
+                }
+            });
+        var btnEditCancel = $('<button type=\'button\'></button>').text('Cancel')
+            .addClass('btn btn-danger')
+            .on('click', function () { $('#editsmartwizard').smartWizard("reset"); });
+
+        //Edit Smart Wizard 1
+        $('#editsmartwizard').smartWizard({
+            selected: 0, justified: true,
+            theme: 'arrows',
+            transitionEffect: 'slide-horizontal',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'both',
+                toolbarExtraButtons: [btnEditFinish, btnEditCancel]
+            }
+        });
+
+        //Delete Smart Wizard
+        $('#deletesmartwizard').smartWizard({
+            selected: 0,
+            theme: 'arrows',
+            transitionEffect: 'fade',
+            showStepURLhash: false,
+            toolbarSettings: {
+                toolbarPosition: 'none'
+            }
+        });
+
+        if ("@(User.IsInRole("QuoteUser"))"=="True") {
+            getUserQuotation();
+        }
+        if ("@(User.IsInRole("Admin") || User.IsInRole("User"))" == "True") {
+            $("#Search").click();
+        }
+
+    });
+    function getObjects(searchterm) {
+        $.post("/quotations/getquotations", searchterm, function (objects) {
+            var taskstr = "";
+            if (objects && objects.length > 0) {
+                for (var i = 0; i < objects.length; i++) {
+                    taskstr += "<tr>";
+                    taskstr += "    <td>";
+                    taskstr += objects[i].quoteId
+                    taskstr += "    </td>";
+                    taskstr += "    <td>";
+                    taskstr += objects[i].title;
+                    taskstr += "    </td>";
+                    taskstr += "    <td>";
+                    taskstr += objects[i].user;
+                    taskstr += "    </td>";
+                    taskstr += "    <td>";
+                    taskstr += objects[i].quotationDate;
+                    taskstr += "    </td>";
+                    taskstr += "    <td>";
+                    taskstr += objects[i].conversionDate;
+                    taskstr += "    </td>";
+                    taskstr += "    <td>";
+                    taskstr += objects[i].quoteStatus;
+                    taskstr += "    </td>";
+                    taskstr += "    <td>";
+                    taskstr += objects[i].taxType + "(" + objects[i].taxRate + "%)";
+                    taskstr += "    </td>";
+                    taskstr += "    <td>";
+                    taskstr += objects[i].country;
+                    taskstr += "    </td>";
+                    taskstr += "    <td>";
+                    taskstr += objects[i].currency ? objects[i].currency+" ":"";
+                    taskstr += objects[i].totalCost;
+                    taskstr += "    </td>";
+                    taskstr += "    <td class=\"text-primary\">";
+                    if ("@(User.IsInRole("Admin"))" == "True" || ("@(User.IsInRole("User"))" == "True" && $.inArray(objects[i].quoteStatus, ["Closed"], 0) == -1)) {
+                        taskstr += "        <a class=\"btn-sm btn-link btn-primary\" href=\"javascript:getObject(" + objects[i].quoteId + ")\"><i class=\"material-icons\">create</i></a>";
+                        if ("@(User.IsInRole("Admin"))" == "True" && $.inArray(objects[i].quoteStatus, ["CostAccepted"], 0) > -1) {
+                            taskstr += "        <a class=\"btn-sm btn-link btn-primary\" href=\"javascript:closeQuotation(" + objects[i].quoteId + ")\"><i class=\"material-icons\">refresh</i></a>";
+                        }
+                        taskstr += "        <a class=\"btn-sm btn-link btn-danger\"  href=\"javascript:deleteObject(" + objects[i].quoteId + ",'" + objects[i].title + "')\" ><i class=\"material-icons\">delete_sweep</i></a>";
+                    }
+                    taskstr += "    </td>";
+                    taskstr += "</tr>";
+                    }
+            } else {
+                taskstr = "<tr><td>No Data Found.</td></tr>";
+            }
+            $("#List > tbody").html(taskstr);
+        });
+    }
+
+    function fillDDLs(taxtype, country, currency) {
+
+        $.get("/common/gettaxtypes", function (objects) {
+                var str = "<option value=\"\">-- Select --</option>";
+             if (objects && objects.length > 0) {
+                 for (var i = 0; i < objects.length; i++) {
+                     str += "<option data-taxrate=\"" + objects[i].value + "\" value=\"" + objects[i].name + "\">" + objects[i].name + " (" + objects[i].value +"%)</option>";
+                    }
+                } else {
+                 str = "<option>No Data</option>";
+                }
+            $("#TaxType", "#EditForm").html(str);
+            $("#TaxType", "#EditForm").val(taxtype);
+         });
+
+        $("#TaxType").change(function () {
+            $("#TaxRate").val($("#TaxType option:selected").data("taxrate"));
+        });
+
+        $.get("/common/getcountries", function (objects) {
+            var str = "<option value=\"\">-- Select --</option>";
+            if (objects && objects.length > 0) {
+                for (var i = 0; i < objects.length; i++) {
+                    str += "<option value=\"" + objects[i] + "\">" + objects[i] + "</option>";
+                }
+            } else {
+                str = "<option>No Data</option>";
+            }
+            $("#Country", "#EditForm").html(str);
+            $("#Country", "#EditForm").val(country);
+        });
+
+
+                $.get("/common/getcurrencies", function (objects) {
+                    var str = "<option value=\"\">-- Select Currency --</option>";
+                    if (objects && objects.length > 0) {
+                        for (var i = 0; i < objects.length; i++) {
+                            str += "<option value=\"" + objects[i].code + "\">" + objects[i].name + "</option>";
+                    }
+                } else {
+                    str = "<tr><td>No Data Found.</td></tr>";
+                }
+                    $("#Currency", "#EditForm").html(str);
+                    $("#Currency", "#EditForm").val(currency);
+                    if ("@(User.IsInRole("Admin"))" == "True") {
+                        $("#ToCurrency", "#EditForm").html(str);
+                    }
+                });
+        if ("@(User.IsInRole("Admin"))" == "True") {
+            $("#ToCurrency").change(function () {
+                var from = $("#Currency").val();
+                var to = $("#ToCurrency").val();
+                var amt = $("#TotalCost").val();
+                $.get("/common/convertcurrency?fromCurrency=" + from + "&toCurrency=" + to + "&amount=" + amt, function (convertCost) {
+                    $("#ConvertedCost", "#EditForm").val(convertCost);
+                });
+            });
+        }
+    }
+
+    //for admin
+    function getObject(Id) {
+
+        if (Id > 0) {
+            $.get("/quotations/editquotation?id=" + Id, function (object) {
+                if (object) {
+                    $("#QuoteId", "#EditForm").val(object.quoteId);
+                    $("#UserId", "#EditForm").val(object.userId);
+                    $("#Title", "#EditForm").val(object.title);
+                    $("#Description", "#EditForm").val(object.description);
+                    if ("@(User.IsInRole("User"))" == "True") {
+                        $("#QuoteStatus", "#EditForm").html(fillStatusDDL(true, true, true, ($.inArray(object.quoteStatus, ["ProposalAccepted"], 0) == -1 || object.totalCost == 0), ($.inArray(object.quoteStatus, ["ProposalAccepted"], 0) == -1 || object.totalCost == 0)));
+                    }
+                    else if("@(User.IsInRole("Admin"))" == "True"){
+                        $("#QuoteStatus", "#EditForm").html(fillStatusDDL(true, false, false, true, true));
+                    }
+                    $("#QuoteStatus", "#EditForm").val(object.quoteStatus);
+                    $("#QuotationDate", "#EditForm").val(object.quotationDate);
+                    $("#ConversionDate", "#EditForm").val(object.conversionDate);
+                    $("#TaxType", "#EditForm").val(object.taxType || "");
+                    $("#TaxRate", "#EditForm").val(object.taxRate);
+                    $("#Country", "#EditForm").val(object.country || "");
+                    $("#Currency", "#EditForm").val(object.currency || "");
+                    $("#TotalCost", "#EditForm").val(object.totalCost);
+                    fillDDLs(object.taxType || "", object.country || "", object.currency || "");
+                    if (object.tasks && object.tasks.length > 0) {
+                        var str = "";
+                        for (var i = 0; i < object.tasks.length; i++) {
+                            str += " <div class=\"form-group border\">";
+                            str += " <button type=\"button\" class=\"btn btn-link btn-danger\" onclick=\"deletetask(" + i + ")\"><i class=\"material-icons\">delete_sweep</i></button>";
+                            str += "     <label for=\"TaskOwner\">Task </label>";
+                            str += "     <input type=\"text\" onchange=\"changeTaskStatus(" + i + ")\" Id=\"tasks_" + i + "_TaskName\" name=\"tasks[" + i + "].TaskName\" class=\"form-control\" placeholder=\"Name\" value=\"" + object.tasks[i].taskName + "\" />";
+                            str += "     <textarea onchange=\"changeTaskStatus(" + i + ")\" Id=\"tasks_" + i + "_TaskTitle\" name=\"tasks[" + i + "].TaskTitle\" class=\"form-control\" placeholder=\"Title\">" + object.tasks[i].taskTitle + "</textarea>";
+                            str += "     <input type=\"text\" "+("@(User.IsInRole("User"))" == "True"?"readonly":"")+" onchange=\"calculateTotalCost(" + i + ")\" Id=\"tasks_" + i + "_Cost\" name=\"tasks[" + i + "].Cost\" class=\"form-control\" placeholder=\"Cost\" value=\"" + object.tasks[i].cost + "\" />";
+                            str += "     <input type=\"hidden\" Id=\"tasks_" + i + "_TaskId\" name=\"tasks[" + i + "].TaskId\"  value=\"" + object.tasks[i].taskId + "\"  />";
+                            str += "     <input type=\"hidden\" Id=\"tasks_" + i + "_QuoteId\" name=\"tasks[" + i + "].QuoteId\" value=\"" + object.tasks[i].quoteId + "\" />";
+                            str += "     <input type=\"hidden\" Id=\"tasks_" + i + "_ChangeState\" name=\"tasks[" + i + "].ChangeState\" value=\"" + object.tasks[i].changeState + "\"  />";
+                            str += "     <div class=\"help-block with-errors\"></div>";
+                            str += " </div>";
+                        }
+                        $("#form-step-1", "#EditForm").html(str);
+                        taskIndex = object.tasks.length;
+                    }
+
+                }
+                else {
+
+                }
+                $("#EditModal").click();
+                $("#EditModalLabel", "#EditModalDialog").text("Edit Quotation");
+                $("#btnAddTask", "#EditForm").attr("disabled",true);
+            });
+        }
+        else {
+            viewNewQuotationModal();
+        }
+    }
+    function fillStatusDDL(
+          pendingDisabled
+        , proposalAcceptedDisabled
+        , proposalRejectedDisabled
+        , costAcceptedDisabled
+        , costRejectedDisabled) {
+        var str = "";
+        str += "<option " + (pendingDisabled ? "disabled" : "") + " value=\"Pending\">Pending</option>";
+        str += "<option " + (proposalAcceptedDisabled ? "disabled" : "") + " value=\"ProposalAccepted\">Proposal Accepted</option>";
+        str += "<option " + (proposalRejectedDisabled ? "disabled" : "") + " value=\"ProposalRejected\">Proposal Rejected</option>";
+        str += "<option " + (costAcceptedDisabled?"disabled":"")+" value=\"CostAccepted\">Cost Accepted</option>";
+        str += "<option " + (costRejectedDisabled ? "disabled" : "") +" value=\"CostRejected\">Cost Rejected</option>";
+        return str;
+    }
+    //for QuoteUser
+    function getUserQuotation() {
+            $.get("/quotations/getuserquotation", function (object) {
+                if (object) {
+                    $("#QuoteId", "#EditForm").val(object.quoteId);
+                    $("#UserId", "#EditForm").val(object.userId);
+                    $("#Title", "#EditForm").val(object.title).attr("readonly", true);
+                    $("#Description", "#EditForm").val(object.description).attr("readonly", true);
+                    $("#QuoteStatus", "#EditForm").html(fillStatusDDL(true, true, true, ($.inArray(object.quoteStatus, ["ProposalAccepted"], 0) == -1 || object.totalCost == 0), ($.inArray(object.quoteStatus, ["ProposalAccepted"], 0) == -1 || object.totalCost == 0))).val(object.quoteStatus);
+                    $("#QuotationDate", "#EditForm").val(object.quotationDate).attr("readonly", true);
+                    $("#ConversionDate", "#EditForm").val(object.conversionDate).attr("readonly", true);
+                    $("#TaxType", "#EditForm").val(object.taxType || "");
+                    $("#TaxRate", "#EditForm").val(object.taxRate);
+                    $("#Country", "#EditForm").val(object.country || "");
+                    $("#Currency", "#EditForm").val(object.currency || "");
+                    $("#TotalCost", "#EditForm").val(object.totalCost).attr("readonly", true);
+                    fillDDLs(object.taxType || "", object.country || "", object.currency || "");
+                    if (object.tasks && object.tasks.length > 0) {
+                        var str = "";
+                        for (var i = 0; i < object.tasks.length; i++) {
+                            str += " <div class=\"form-group border\">";
+                           // str += " <button type=\"button\" class=\"btn btn-link btn-danger\" onclick=\"deletetask(" + i + ")\"><i class=\"material-icons\">delete_sweep</i></button>";
+                            str += "     <label for=\"TaskOwner\">Task </label>";
+                            str += "     <input readonly type=\"text\" onchange=\"changeTaskStatus(" + i + ")\" Id=\"tasks_" + i + "_TaskName\" name=\"tasks[" + i + "].TaskName\" class=\"form-control\" placeholder=\"Name\" value=\"" + object.tasks[i].taskName + "\" />";
+                            str += "     <textarea readonly onchange=\"changeTaskStatus(" + i + ")\" Id=\"tasks_" + i + "_TaskTitle\" name=\"tasks[" + i + "].TaskTitle\" class=\"form-control\" placeholder=\"Title\">" + object.tasks[i].taskTitle + "</textarea>";
+                            str += "     <input type=\"text\" readonly onchange=\"changeTaskStatus(" + i + ")\" Id=\"tasks_" + i + "_Cost\" name=\"tasks[" + i + "].Cost\" class=\"form-control\" placeholder=\"Cost\" value=\"" + object.tasks[i].cost + "\" />";
+                            str += "     <input type=\"hidden\" Id=\"tasks_" + i + "_TaskId\" name=\"tasks[" + i + "].TaskId\"  value=\"" + object.tasks[i].taskId + "\"  />";
+                            str += "     <input type=\"hidden\" Id=\"tasks_" + i + "_QuoteId\" name=\"tasks[" + i + "].QuoteId\" value=\"" + object.tasks[i].quoteId + "\" />";
+                            str += "     <input type=\"hidden\" Id=\"tasks_" + i + "_ChangeState\" name=\"tasks[" + i + "].ChangeState\" value=\"" + object.tasks[i].changeState + "\"  />";
+                            str += "     <div class=\"help-block with-errors\"></div>";
+                            str += " </div>";
+                        }
+                        $("#form-step-1", "#EditForm").html(str);
+                        taskIndex = object.tasks.length;
+                    }
+                    $("#EditModal").click();
+                    $("#EditModalLabel", "#EditModalDialog").text("Edit Task");
+                    $("#btnAddTask", "#EditForm").attr("disabled", true);
+                }
+                else {
+                    viewNewQuotationModal();
+                }
+
+            });
+    }
+    function viewNewQuotationModal() {
+                    $("#EditModal").click();
+                    $("#EditModalLabel", "#EditModalDialog").text("Add Task");
+                    $("input,select,textarea", "#EditForm").val("");
+                    $("#form-step-1", "#EditForm").empty();
+                    $("#QuoteStatus", "#EditForm").html(fillStatusDDL(false, true, true, true, true));
+                    $("#QuoteStatus", "#EditForm").val("Pending");
+                    $("#QuoteStatus option:has(:selected)").attr("disabled", "disabled");
+                    $("#UserId", "#EditForm").val("@(Session.GetString("UserId"))");
+                    $("#QuotationDate", "#EditForm").val("@(DateTime.Now.ToString("yyyy-MM-dd HH:mm"))").attr("readonly", true);
+                    $("#ConversionDate", "#EditForm").val("@(DateTime.Now.ToString("yyyy-MM-dd HH:mm"))").attr("readonly", true);
+        $("#TotalCost", "#EditForm").val("0").attr("readonly", true);
+        fillDDLs("","","");
+    }
+    function deleteObject(quoteId, title) {
+        $("#QuoteId", "#DeleteForm").val(quoteId);
+        $("#Title", "#DeleteForm").val(title);
+        $("#DeleteModal").click();
+    }
+    function deleteconfirmed() {
+        $.get("/quotations/delete?id=" + $("#QuoteId", "#DeleteForm").val(), function () { window.location.href = "/quotations/index" });
+    }
+
+    var taskIndex = 0;
+    function changeTaskStatus(i) {
+         if ($("#tasks_" + i + "_ChangeState", "#EditForm").val() != "@((byte)Microsoft.EntityFrameworkCore.EntityState.Added)") {
+             $("#tasks_" + i + "_ChangeState", "#EditForm").val("@((byte)Microsoft.EntityFrameworkCore.EntityState.Modified)");
+         }
+    }
+
+    function addTaskRow() {
+        var i = taskIndex;
+        var str = "";
+         str += " <div class=\"form-group border\">";
+         str += " <button type=\"button\" class=\"btn btn-link btn-danger\" onclick=\"deletetask(" + i + ")\"><i class=\"material-icons\">delete_sweep</i></button>";
+         str += "     <label for=\"TaskOwner\">Task</label>";
+         str += "     <input type=\"text\" onchange=\"changeTaskStatus(" + i + ")\" Id=\"tasks_" + i + "_TaskName\" name=\"tasks[" + i + "].TaskName\" class=\"form-control\" placeholder=\"Name\" value=\"\" />";
+         str += "     <textarea onchange=\"changeTaskStatus(" + i + ")\" Id=\"tasks_" + i + "_TaskTitle\" name=\"tasks[" + i + "].TaskTitle\" class=\"form-control\" placeholder=\"Title\"></textarea>";
+         str += "     <input type=\"text\" onchange=\"changeTaskStatus(" + i + ")\" Id=\"tasks_" + i + "_Cost\" readonly name=\"tasks[" + i + "].Cost\" class=\"form-control\" placeholder=\"Cost\" value=\"0\" />";
+         str += "     <input type=\"hidden\" Id=\"tasks_" + i + "_TaskId\" name=\"tasks[" + i + "].TaskId\"  value=\"\"  />";
+         str += "     <input type=\"hidden\" Id=\"tasks_" + i + "_QuoteId\" name=\"tasks[" + i + "].QuoteId\" value=\"\" />";
+         str += "     <input type=\"hidden\" Id=\"tasks_" + i + "_ChangeState\" name=\"tasks[" + i + "].ChangeState\" value=\"@((byte)Microsoft.EntityFrameworkCore.EntityState.Added)\"  />";
+         str += "     <div class=\"help-block with-errors\"></div>";
+         str += " </div>";
+        if ($("#form-step-1", "#EditForm").length == 0) {
+            $("#form-step-1", "#EditForm").html(str);
+        }
+        else
+        { $("#form-step-1", "#EditForm").append(str); }
+        taskIndex++;
+    }
+
+    function deletetask(i) {
+        $("#tasks_" + i + "_TaskId").parent().hide();
+        $("#tasks_" + i + "_ChangeState").val("@((byte)Microsoft.EntityFrameworkCore.EntityState.Deleted)");
+    }
+
+    function calculateTotalCost(i) {
+        var totalCost = 0;
+        for (var j = 0; j < taskIndex; j++) {
+            totalCost += parseFloat($.trim($("#tasks_" + j + "_Cost").val()) || "0");
+        }
+        $("#TotalCost", "#EditForm").val(totalCost)
+        changeTaskStatus(i)
+    }
+
+    function closeQuotation(Id) {
+        if (Id > 0) {
+            $.get("/quotations/closequotation?id=" + Id, function () { window.location.href = "/quotations/index" });
+        }
+    }
+</script>

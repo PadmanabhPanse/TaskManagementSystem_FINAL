@@ -1,0 +1,103 @@
+﻿@model TaskManagementSystem.Models.AccessControlViewModel
+@{
+    ViewData["Title"] = "Access Control";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-info">
+                <h4 class="card-title ">Access Control</h4>
+                <p class="card-category"> Assign Pages to Roles</p>
+            </div>
+            <div class="card-body">
+                <form asp-action="AssignRoles" method="post">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead class=" text-info">
+                                <tr>
+                                    @if (Model != null && Model.roles.Any())
+                                    {
+                                        @foreach (var role in Model.roles)
+                                        {
+                                            <th>
+                                                @role
+                                            </th>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <th>
+                                            No Roles added
+                                        </th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @if (Model != null && Model.menuItems.Any())
+                                {
+                                    for (int i = 0; i < Model.menuItems.Count; i++)
+                                    {
+                                        <tr>
+                                            @if (Model != null && Model.roles.Any())
+                                            {
+                                                @foreach (var role in Model.roles)
+                                                {
+                                                    <td>
+                                                        @Html.Hidden($"menuItems[{i}].Id", Model.menuItems[i].Id)
+                                                        @Html.Hidden($"menuItems[{i}].ParentMenuId", Model.menuItems[i].ParentMenuId)
+                                                        @Html.Hidden($"menuItems[{i}].Name", Model.menuItems[i].Name)
+                                                        @Html.Hidden($"menuItems[{i}].ActionName", Model.menuItems[i].ActionName)
+                                                        @Html.Hidden($"menuItems[{i}].ControllerName", Model.menuItems[i].ControllerName)
+                                                        @Html.Hidden($"menuItems[{i}].Url", Model.menuItems[i].Url)
+                                                        @Html.Hidden($"menuItems[{i}].Roles", Model.menuItems[i].Roles, new { id = $"role{Model.menuItems[i].Id}" })
+                                                        <div class="form-check ">
+                                                            <label class="form-check-label">
+                                                                @Html.CheckBox($"{Model.menuItems[i].Id}", Model.menuItems[i].Roles?.Split(',').Contains(role), new { @class = "form-check-input", value = role })
+                                                                <span class="form-check-sign">
+                                                                    <span class="check"></span>
+                                                                </span>
+                                                            </label>@Model.menuItems[i].Name
+                                                        </div>
+                                                    </td>
+
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <td>No Menu Items Added</td>
+                                            }
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <th>
+                                            No Roles added
+                                        </th>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="submit" class="btn btn-info pull-right">Save</button>
+                    <div class="clearfix"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/assets/js/core/jquery.min.js"></script>
+<script>
+    $(function () {
+        $("input:checkbox.form-check-input").change(function () {
+            $("#role" + $(this).attr('name')).val($('input[name=' + $(this).attr('name') + ']:checkbox:checked').map(function () { return this.value; }).get().join(','));
+        });
+    });
+</script>

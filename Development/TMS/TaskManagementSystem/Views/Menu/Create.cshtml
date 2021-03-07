@@ -1,0 +1,37 @@
+﻿@model TaskManagementSystem.Models.Menu
+
+@{
+    ViewData["Title"] = "Create Menu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title">Create Menu</h4>
+                <p class="card-category">Add New Menu</p>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <input asp-for="Id" type="hidden" value="@Convert.ToInt64(DateTime.Now.ToString("yyyyMMddHHmmssff"))" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group bmd-form-group">
+                                <label asp-for="Name" class="bmd-label-floating">Name</label>
+                                <input asp-for="Name" type="text" class="form-control">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary pull-right">Create</button>
+                    <div class="clearfix"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

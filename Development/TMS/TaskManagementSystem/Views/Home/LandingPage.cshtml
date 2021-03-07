@@ -1,0 +1,75 @@
+﻿@model IEnumerable<TaskManagementSystem.Models.Subscription>
+
+@{ ViewData["Title"] = "Landing Page";}
+<link href="~/assets/css/UserSubscription.css" rel="stylesheet" />
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-8">
+                @if (Model != null && Model.Count() > 0)
+                {
+                    int i = 0;
+                    string position = string.Empty;
+    @foreach (var item in Model.OrderByDescending(s => s.Id).Take(3))
+    {
+        switch (++i)
+        {
+            case 1: position = "left"; break;
+            case 2: position = "large"; break;
+            case 3: position = "right"; break;
+        }
+        if (i == 1)
+        {
+@Html.Raw("<div class=\"card\"><div class=\"card-body\"><div class=\"priceTable\">");
+}
+<div class="table @position">
+    <h1>@item.Name</h1>
+    <h2><sup>₹ </sup>@(item.TotalCost)</h2>
+    <h3>per month (billed annually)</h3>
+    <div class="circle"></div>
+
+    <ul>
+        <li>
+            @Html.DisplayFor(modelItem => item.taxType) Included
+        </li>
+        <li>
+            @Html.DisplayFor(modelItem => item.queryType)
+        </li>
+        @if (item.queryType == QueryType.Subscription)
+        {
+<li>
+    ₹ @Html.DisplayFor(modelItem => item.CostPerQuery) only for just Processing @item.queryRange.Min to @item.queryRange.Max Queries
+</li>
+}
+        <li>
+            Total    @Html.DisplayFor(modelItem => item.Credits) Credits
+        </li>
+        <li>
+            ₹. @Html.DisplayFor(modelItem => item.CostPerCredit) for Credit
+        </li>
+        <li class="noborder">₹ @(item.TotalCost) TMS Account</li>
+        <li class="action"><a asp-controller="Account" asp-action="Register" asp-route-SubscriptionId="@item.Id">Sign Up</a></li>
+    </ul>
+
+</div> if (i == 3)
+{
+@Html.Raw("</div></div></div>");
+i = 0;
+}
+}}
+            </div>
+            <div class="col-md-4">
+                <a class="btn-primary" asp-controller="Account" asp-action="Login">Login</a>
+                <a class="btn-primary" asp-controller="Account" asp-action="Register" asp-route-FromQuotePage="true">Get Quote </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9">
+                Other
+            </div>
+            <div class="col-md-3">
+                Other
+            </div>
+        </div>
+    </div>
+</div>

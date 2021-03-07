@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfMessage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Message Id="2020052821473074" Name="Task Status Changed" Type="sms" IsHtml="false">
+    <IsActive>true</IsActive>
+    <Subject>Task {{object.TaskName}} Status Changed to  {{object.TaskStatus}} </Subject>
+    <Body>Task {{object.TaskName}} Status Changed to  {{object.TaskStatus}} .</Body>
+  </Message>
+  <Message Id="2020052910525723" Name="Test area" Type="email" IsHtml="true">
+    <IsActive>true</IsActive>
+    <Subject>Test area</Subject>
+    <Body>&lt;u&gt;&lt;i&gt;Test &lt;/i&gt;&lt;b&gt;area&lt;/b&gt;&lt;/u&gt;</Body>
+  </Message>
+</ArrayOfMessage>

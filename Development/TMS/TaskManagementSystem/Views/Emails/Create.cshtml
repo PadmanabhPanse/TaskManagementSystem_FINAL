@@ -1,0 +1,47 @@
+﻿@model Email
+@{
+    ViewData["Title"] = "Create Email";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/assets/js/core/jquery.min.js"></script>
+<script>
+    $(function () {
+        $("#Body").htmlarea();
+    });
+</script>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title">Create Email</h4>
+                <p class="card-category">Create Email</p>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input asp-for="Id" type="hidden" value="@Convert.ToInt64(DateTime.Now.ToString("yyyyMMddHHmmssff"))" />
+                                <input asp-for="Types" type="hidden" />
+                                <label asp-for="Subject" class="control-label">Subject</label>
+                                <input asp-for="Subject" class="form-control" />
+                                <span asp-validation-for="Subject" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Body" class="control-label">Body</label>
+                                <textarea asp-for="Body" class="form-control" cols="10" rows="5"></textarea>
+                                <span asp-validation-for="Body" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary pull-right">Save</button>
+                    <div class="clearfix"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

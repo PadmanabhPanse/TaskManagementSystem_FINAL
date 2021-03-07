@@ -1,0 +1,438 @@
+﻿@model Dashboard
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-success card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">work</i>
+                </div>
+                <p class="card-category">Completed Tasks</p>
+                <h3 id="completedTask-count" class="card-title">
+                    @(Model?.CompletedTasksCount ?? 0)
+                </h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons text-success">work</i>
+                    <a href="/tasks/completed">View Completed Tasks</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-warning card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">work</i>
+                </div>
+                <p class="card-category">Ongoing Tasks</p>
+                <h3 id="inprogressTask-count" class="card-title">
+                    @(Model?.InprogressTasksCount ?? 0)
+                </h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons text-warning">work</i>
+                    <a href="/tasks/Ongoing">View Ongoing Tasks</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-danger card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">work</i>
+                </div>
+                <p class="card-category">Overdue Tasks</p>
+                <h3 id="overdueTask-count" class="card-title">
+                    @(Model?.OverDueTasksCount ?? 0)
+                </h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons text-danger">work</i>
+                    <a href="/tasks/Pending">View Overdue Tasks</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-info card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">work</i>
+                </div>
+                <p class="card-category">Closed Tasks</p>
+                <h3 id="closedTask-count" class="card-title">
+                    @(Model?.ClosedTasksCount ?? 0)
+                </h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons text-info">work</i>
+                    <a href="/tasks/Closed">View Closed Tasks</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card card-chart">
+            <div class="card-header card-header-success">
+                <div class="ct-chart" id="dailyCompletedTasksChart"></div>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">Completed Tasks</h4>
+                <p class="card-category">Last Campaign Performance</p>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons text-success">work</i>
+                    <a href="/tasks/Completed">View Completed Tasks</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-chart">
+            <div class="card-header card-header-warning">
+                <div class="ct-chart" id="dailyOngoingTasksChart"></div>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">Ongoing Tasks</h4>
+                <p class="card-category">Last Campaign Performance</p>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    @*<i class="material-icons">access_time</i> campaign sent 2 days ago*@
+                    <i class="material-icons text-warning">work</i>
+                    <a href="/tasks/Ongoing">View Ongoing Tasks</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-chart">
+            <div class="card-header card-header-danger">
+                <div class="ct-chart" id="dailyOverdueTasksChart"></div>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">Overdue Tasks</h4>
+                <p class="card-category">Last Campaign Performance</p>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    @*<i class="material-icons">access_time</i> campaign sent 2 days ago*@
+                    <i class="material-icons text-danger">work</i>
+                    <a href="/tasks/Pending">View Overdue Tasks</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-chart">
+            <div class="card-header card-header-info">
+                <div class="ct-chart" id="dailyClosedTasksChart"></div>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">Closed Tasks</h4>
+                <p class="card-category">Last Campaign Performance</p>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    @*<i class="material-icons">access_time</i> campaign sent 2 days ago*@
+                    <i class="material-icons text-info">work</i>
+                    <a href="/tasks/Closed">View Closed Tasks</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6 col-md-12">
+        <div class="card">
+            <div class="card-header card-header-tabs card-header-primary">
+                <div class="nav-tabs-navigation">
+                    <div class="nav-tabs-wrapper">
+                        <span class="nav-tabs-title">Tasks:</span>
+                        <ul class="nav nav-tabs" data-tabs="tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#profile" data-toggle="tab">
+                                    <i class="material-icons">work</i> Ongoing
+                                    <div class="ripple-container"></div>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#messages" data-toggle="tab">
+                                    <i class="material-icons">work</i> Completed
+                                    <div class="ripple-container"></div>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#settings" data-toggle="tab">
+                                    <i class="material-icons">work</i> Overdue
+                                    <div class="ripple-container"></div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="profile">
+                        <table class="table">
+                            <thead class="text-warning">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.InprogressTasks.Any())
+                                {
+                                    foreach (var item in Model.InprogressTasks.OrderByDescending(task => task.TaskEstimateTime).Take(5))
+                                    {
+                                        <tr>
+                                            <td>@item.TaskId</td>
+                                            <td>@item.TaskName</td>
+                                            <td>@item.TaskStartDate.ToString("dd.MM.yyyy")</td>
+                                            <td>@item.TaskEstimateTime.Value.ToString("dd.MM.yyyy")</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane" id="messages">
+                        <table class="table">
+                            <thead class="text-warning">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.CompletedTasks.Any())
+                                {
+                                    foreach (var item in Model.CompletedTasks.OrderByDescending(task => task.TaskEstimateTime).Take(5))
+                                    {
+                                        <tr>
+                                            <td>@item.TaskId</td>
+                                            <td>@item.TaskName</td>
+                                            <td>@item.TaskStartDate.ToString("dd.MM.yyyy")</td>
+                                            <td>@item.TaskEstimateTime.Value.ToString("dd.MM.yyyy")</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane" id="settings">
+                        <table class="table">
+                            <thead class="text-warning">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.OverdueTasks.Any())
+                                {
+                                    foreach (var item in Model.OverdueTasks.OrderByDescending(task => task.TaskEstimateTime).Take(5))
+                                    {
+                                        <tr>
+                                            <td>@item.TaskId</td>
+                                            <td>@item.TaskName</td>
+                                            <td>@item.TaskStartDate.ToString("dd.MM.yyyy")</td>
+                                            <td>@item.TaskEstimateTime.Value.ToString("dd.MM.yyyy")</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-12">
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="card">
+                <div class="card-header card-header-warning">
+                    <h4 class="card-title">Billing Information</h4>
+                    <p class="card-category">Subscriptions</p>
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table table-hover">
+                            <thead class="text-warning">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Total Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.subscriptions.Count() > 0)
+                                {
+                                    foreach (var item in Model.subscriptions.Take(5))
+                                    {
+                                        <tr>
+                                            <td>@item.Name</td>
+                                            <td>₹ @(item.TotalCost)</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script type="text/javascript">
+    setTimeout(function () {
+            // Javascript method's body can be found in assets/js/demos.js
+        @{
+            string CompletedTasks = null, ClosedTasks = null, OngoingTasks = null, OverdueTasks = null;
+            string Labels = null;
+            string Series = null;
+            if (Model != null)
+            {
+                if (Model.DaywiseCompletedTasks.Any())
+                {
+                    Labels = null;
+                    Series = null;
+                    foreach (var item in Model.DaywiseCompletedTasks)
+                    {
+                        if (string.IsNullOrEmpty(Labels))
+                        {
+                            Labels = string.Concat("\'" + item.Item1, "\'");
+                            Series = string.Concat(item.Item2);
+                        }
+                        else
+                        {
+                            Labels += string.Concat(",", "\'" + item.Item1, "\'");
+                            Series += string.Concat(",", item.Item2);
+                        }
+                    }
+                    CompletedTasks = string.Concat("{labels: [", Labels, "]");
+                    CompletedTasks += string.Concat(",series: [[", Series, "]]}");
+                }
+                else
+                {
+                    CompletedTasks = string.Concat("{labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S']");
+                    CompletedTasks += string.Concat(",series: [[0, 0, 0, 0, 0, 0, 0]]}");
+                }
+                if (Model.DaywiseInprogressTasks.Any())
+                {
+                    Labels = null;
+                    Series = null;
+                    foreach (var item in Model.DaywiseInprogressTasks)
+                    {
+                        if (string.IsNullOrEmpty(Labels))
+                        {
+                            Labels = string.Concat("\'" + item.Item1, "\'");
+                            Series = string.Concat(item.Item2);
+                        }
+                        else
+                        {
+                            Labels += string.Concat(",", "\'" + item.Item1, "\'");
+                            Series += string.Concat(",", item.Item2);
+                        }
+                    }
+                    OngoingTasks = string.Concat("{labels: [", Labels, "]");
+                    OngoingTasks += string.Concat(",series: [[", Series, "]]}");
+                }
+                else
+                {
+                    OngoingTasks = string.Concat("{labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S']");
+                    OngoingTasks += string.Concat(",series: [[0, 0, 0, 0, 0, 0, 0]]}");
+                }
+                if (Model.DaywiseOverDueTasks.Any())
+                {
+                    Labels = null;
+                    Series = null;
+                    foreach (var item in Model.DaywiseOverDueTasks)
+                    {
+                        if (string.IsNullOrEmpty(Labels))
+                        {
+                            Labels = string.Concat("\'" + item.Item1, "\'");
+                            Series = string.Concat(item.Item2);
+                        }
+                        else
+                        {
+                            Labels += string.Concat(",", "\'" + item.Item1, "\'");
+                            Series += string.Concat(",", item.Item2);
+                        }
+                    }
+                    OverdueTasks = string.Concat("{labels: [", Labels, "]");
+                    OverdueTasks += string.Concat(",series: [[", Series, "]]}");
+                }
+                else
+                {
+                    OngoingTasks = string.Concat("{labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S']");
+                    OngoingTasks += string.Concat(",series: [[0, 0, 0, 0, 0, 0, 0]]}");
+                }
+                if (Model.DaywiseClosedTasks.Any())
+                {
+                    Labels = null;
+                    Series = null;
+                    foreach (var item in Model.DaywiseClosedTasks)
+                    {
+                        if (string.IsNullOrEmpty(Labels))
+                        {
+                            Labels = string.Concat("\'" + item.Item1, "\'");
+                            Series = string.Concat(item.Item2);
+                        }
+                        else
+                        {
+                            Labels += string.Concat(",", "\'" + item.Item1, "\'");
+                            Series += string.Concat(",", item.Item2);
+                        }
+                    }
+                    ClosedTasks = string.Concat("{labels: [", Labels, "]");
+                    ClosedTasks += string.Concat(",series: [[", Series, "]]}");
+                }
+                else
+                {
+                    ClosedTasks = string.Concat("{labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S']");
+                    ClosedTasks += string.Concat(",series: [[0, 0, 0, 0, 0, 0, 0]]}");
+                }
+            }
+            else
+            {
+                CompletedTasks = string.Concat("{labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S']");
+                CompletedTasks += string.Concat(",series: [[0, 0, 0, 0, 0, 0, 0]]}");
+                OngoingTasks = string.Concat("{labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S']");
+                OngoingTasks += string.Concat(",series: [[0, 0, 0, 0, 0, 0, 0]]}");
+                OngoingTasks = string.Concat("{labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S']");
+                OngoingTasks += string.Concat(",series: [[0, 0, 0, 0, 0, 0, 0]]}");
+                ClosedTasks = string.Concat("{labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S']");
+                ClosedTasks += string.Concat(",series: [[0, 0, 0, 0, 0, 0, 0]]}");
+            }
+
+            };
+            md.initDashboardPageCharts(@(Html.Raw(CompletedTasks)),@(Html.Raw(OngoingTasks)),@(Html.Raw(OverdueTasks)),@(Html.Raw(ClosedTasks)),"@(Model?.TotalTasksCount ?? 10)");
+            //var dataDailySalesChart = {
+            //   labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+            //   series: [
+            //     [12, 17, 7, 17, 23, 18, 38]
+            //   ]
+            // };
+            //md.initDashboardPageCharts(dataDailySalesChart, dataDailySalesChart, dataDailySalesChart, dataDailySalesChart);
+        },5000);
+</script>

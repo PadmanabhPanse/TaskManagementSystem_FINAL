@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfMedia xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Media Id="2020042613544674" Name="MEDIA1" Threshold="5000">
+    <Campaign Id="2020042613544674">MEDIA1MEDIA1MEDIA1MEDIA1MEDIA1MEDIA1MEDIA1</Campaign>
+    <Files>
+      <File fileName="2020042614285639.docx" />
+      <File fileName="2020042614392941.docx" />
+      <File fileName="2020042614394566.docx" />
+    </Files>
+  </Media>
+  <Media Id="2020042620151527" Name="MEDIA2" Threshold="6000">
+    <Campaign Id="2020042620151527">MEDIA2MEDIA2MEDIA2MEDIA2MEDIA2MEDIA2MEDIA2MEDIA2MEDIA2MEDIA2MEDIA2MEDIA2</Campaign>
+    <Files>
+      <File fileName="2020042620261380.docx" />
+      <File fileName="2020042620262976.docx" />
+      <File fileName="2020042620263759.docx" />
+      <File fileName="2020042621084924.docx" />
+      <File fileName="2020042712361778.docx" />
+    </Files>
+  </Media>
+</ArrayOfMedia>

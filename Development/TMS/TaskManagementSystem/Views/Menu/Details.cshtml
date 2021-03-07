@@ -1,0 +1,65 @@
+﻿@model TaskManagementSystem.Models.Menu
+@{
+    ViewData["Title"] = $"Menu {Model.Name} Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-warning">
+                <h4 class="card-title ">Menu Items</h4>
+                <p class="card-category">List of Menu Items for @Model.Name</p>
+                <a class="btn btn-primary" asp-action="createitem" asp-route-parentMenuId="@Model.Id"><i class="material-icons">add</i></a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class=" text-primary">
+                            <tr>
+                                <th>
+                                    ID
+                                </th>
+                                <th>
+                                    Name
+                                </th>
+                                <th>
+                                    Url
+                                </th>
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.menuItems != null && Model.menuItems.Count() > 0)
+                            {
+                                foreach (var item in Model.menuItems)
+                                {
+                                    <tr>
+                                        <td>
+                                            @item.Id
+                                        </td>
+                                        <td>
+                                            @item.Name
+                                        </td>
+                                        <td>
+                                            @item.Url
+                                        </td>
+                                        <td class="text-primary">
+                                            <a class="btn btn-primary" asp-action="edititem" asp-route-id="@item.Id" asp-route-ParentMenuId="@Model.Id"><i class="material-icons">create</i></a>
+                                            <a class="btn btn-danger"  asp-action="deleteitem" asp-route-id="@item.Id" asp-route-ParentMenuId="@Model.Id"><i class="material-icons">delete_sweep</i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to Menu List</a>
+</div>

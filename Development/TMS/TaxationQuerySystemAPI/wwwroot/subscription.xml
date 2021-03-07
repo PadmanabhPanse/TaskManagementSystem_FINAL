@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfSubscription xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Subscription Id="2020052713124848" Name="Sub1">
+    <taxType>GST</taxType>
+    <taxRate>20</taxRate>
+    <querytype>Per Query</querytype>
+    <CostPerQuery>0.0</CostPerQuery>
+    <Credits>1000</Credits>
+    <CostPerCredit>100.00</CostPerCredit>
+    <TotalCost>100000.00</TotalCost>
+  </Subscription>
+  <Subscription Id="2020052713133778" Name="Sub2">
+    <taxType>GST</taxType>
+    <taxRate>20</taxRate>
+    <querytype>Subscription</querytype>
+    <queryRange Min="30" Max="50" />
+    <CostPerQuery>30.00</CostPerQuery>
+    <Credits>100</Credits>
+    <CostPerCredit>50.00</CostPerCredit>
+    <TotalCost>6200.00</TotalCost>
+  </Subscription>
+  <Subscription Id="2020052714190184" Name="Sub3">
+    <taxType>GST</taxType>
+    <taxRate>20</taxRate>
+    <querytype>Per Query</querytype>
+    <CostPerQuery>0.0</CostPerQuery>
+    <Credits>200</Credits>
+    <CostPerCredit>40.00</CostPerCredit>
+    <TotalCost>8000.00</TotalCost>
+  </Subscription>
+  <Subscription Id="2020052714191592" Name="Sub4">
+    <taxType>GST</taxType>
+    <taxRate>20</taxRate>
+    <querytype>Subscription</querytype>
+    <queryRange Min="500" Max="1000" />
+    <CostPerQuery>50.00</CostPerQuery>
+    <Credits>500</Credits>
+    <CostPerCredit>50.00</CostPerCredit>
+    <TotalCost>62500.00</TotalCost>
+  </Subscription>
+  <Subscription Id="2020052714200892" Name="Sub5">
+    <taxType>GST</taxType>
+    <taxRate>20</taxRate>
+    <querytype>Per Query</querytype>
+    <CostPerQuery>0.0</CostPerQuery>
+    <Credits>1000</Credits>
+    <CostPerCredit>100.00</CostPerCredit>
+    <TotalCost>100000.00</TotalCost>
+  </Subscription>
+  <Subscription Id="2020052714202681" Name="Sub6">
+    <taxType>GST</taxType>
+    <taxRate>20</taxRate>
+    <querytype>Subscription</querytype>
+    <queryRange Min="600" Max="1000" />
+    <CostPerQuery>5000.00</CostPerQuery>
+    <Credits>600</Credits>
+    <CostPerCredit>60.00</CostPerCredit>
+    <TotalCost>4036000.00</TotalCost>
+  </Subscription>
+  <Subscription Id="2020060820441073" Name="Sub7">
+    <taxType>GST</taxType>
+    <taxRate>20</taxRate>
+    <querytype>Subscription</querytype>
+    <queryRange Min="15" Max="30" />
+    <CostPerQuery>25.00</CostPerQuery>
+    <Credits>25</Credits>
+    <CostPerCredit>100.00</CostPerCredit>
+    <TotalCost>3062.500</TotalCost>
+  </Subscription>
+  <Subscription Id="2020071621454223" Name="Sub8">
+    <taxType>GST</taxType>
+    <taxRate>20</taxRate>
+    <querytype>Per Query</querytype>
+    <CostPerQuery>0.0</CostPerQuery>
+    <Credits>130</Credits>
+    <CostPerCredit>3000.0</CostPerCredit>
+    <TotalCost>390000.0</TotalCost>
+  </Subscription>
+  <Subscription Id="2020071621464694" Name="Sub9">
+    <taxType>GST</taxType>
+    <taxRate>20.0</taxRate>
+    <querytype>Subscription</querytype>
+    <queryRange Min="50" Max="100" />
+    <CostPerQuery>1000.00</CostPerQuery>
+    <Credits>100</Credits>
+    <CostPerCredit>1000.00</CostPerCredit>
+    <TotalCost>210000.000</TotalCost>
+  </Subscription>
+</ArrayOfSubscription>

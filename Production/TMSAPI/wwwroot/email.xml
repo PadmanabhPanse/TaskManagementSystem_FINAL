@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfEmail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Email Id="2020052916450974" Types="TaskStatusChange">
+    <Subject>Task {{object.TaskName}} Status Changed to  {{object.TaskStatus}}</Subject>
+    <Body>Hello &lt;i&gt;{{object.FirstName}}&lt;/i&gt;&amp;nbsp;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Task {{object.TaskName}} Status Changed to&amp;nbsp; {{object.TaskStatus}}&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Regards&lt;/div&gt;</Body>
+  </Email>
+</ArrayOfEmail>
